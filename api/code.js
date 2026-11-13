@@ -1,7 +1,7 @@
 const BIRTHDAY_CONFIG = {
   celebrantName: "Kathe",
   tagline: "✨ Celebrating Another Year of Magic ✨",
-  birthdayDate: "November 13, 2026",
+  birthdayDate: "November 22, 2026",
   heroSubtitle: "Wishing the happiest of birthdays to the brightest star in the room. May your year ahead sparkle as brightly as you do!",
 
   letterTitle: "A Special Note For You",
