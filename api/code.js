@@ -52,7 +52,6 @@ const BIRTHDAY_CONFIG = {
   ]
 };
 
-// Vercel Serverless Function Handler (CommonJS — no package.json needed)
 module.exports = (req, res) => {
   res.setHeader("Cache-Control", "no-store");
   res.status(200).json(BIRTHDAY_CONFIG);
