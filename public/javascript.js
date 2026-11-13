@@ -1,5 +1,4 @@
 document.addEventListener('DOMContentLoaded', async () => {
-  // 1. Start Midnight Sparkles & Rose-Gold Confetti Engine right away
   const fx = initSparkleAndConfettiEngine();
   fx.burstConfetti(70);
 
@@ -8,11 +7,9 @@ document.addEventListener('DOMContentLoaded', async () => {
   });
   window.triggerBirthdayConfetti = () => fx.burstConfetti(130);
 
-  // 2. Setup Interactive Birthday Candles & Lightbox
   setupCandles();
   setupLightbox();
 
-  // 3. Load Birthday Content & Media from /api/code
   let data = {
     celebrantName: "Kathe",
     tagline: "✨ Celebrating Another Year of Magic ✨",
@@ -59,14 +56,9 @@ function populatePageContent(data) {
   });
 }
 
-/**
- * Smart URL converter:
- * Supports local /media/ files, direct URLs, Google Drive share links, and YouTube links.
- */
 function parseMediaUrl(item) {
   const url = (item.url || '').trim();
 
-  // Google Drive share link
   const driveMatch = url.match(/\/file\/d\/([a-zA-Z0-9_-]+)/) || url.match(/[?&]id=([a-zA-Z0-9_-]+)/);
   if (url.includes('drive.google.com') && driveMatch) {
     const fileId = driveMatch[1];
@@ -85,7 +77,6 @@ function parseMediaUrl(item) {
     }
   }
 
-  // YouTube link
   const ytMatch = url.match(/(?:youtube\.com\/(?:watch\?v=|embed\/|shorts\/)|youtu\.be\/)([a-zA-Z0-9_-]{11})/);
   if (ytMatch && item.type === 'video') {
     const ytId = ytMatch[1];
@@ -96,7 +87,6 @@ function parseMediaUrl(item) {
     };
   }
 
-  // Local file (/media/...) or direct image/MP4 URL
   if (item.type === 'photo') {
     return { kind: 'image', src: url, thumb: url };
   }
@@ -265,9 +255,6 @@ function escapeHtml(str) {
   return div.innerHTML;
 }
 
-/**
- * Midnight Blue Stars + Rose Gold Confetti Particle Engine
- */
 function initSparkleAndConfettiEngine() {
   const canvas = document.getElementById('sparkle-canvas');
   const ctx = canvas.getContext('2d');
