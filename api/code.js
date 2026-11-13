@@ -1,8 +1,3 @@
-/**
- * ====================================================================
- * BIRTHDAY WEBSITE CONFIGURATION (EDIT MANUALLY HERE)
- * ====================================================================
- */
 const BIRTHDAY_CONFIG = {
   celebrantName: "Kathe",
   tagline: "✨ Celebrating Another Year of Magic ✨",
@@ -17,14 +12,6 @@ const BIRTHDAY_CONFIG = {
   ],
   letterSignature: "With all my love, Always ♡",
 
-  // ------------------------------------------------------------------
-  // ADD YOUR PHOTOS AND VIDEOS MANUALLY BELOW
-  // Supported formats:
-  //   - Local files in public/media/: "/media/pic1.jpg" or "/media/vid1.mp4"
-  //   - Direct URLs: "https://.../photo.jpg" or "https://.../video.mp4"
-  //   - Google Drive share links (set to "Anyone with the link")
-  //   - YouTube links (for videos)
-  // ------------------------------------------------------------------
   media: [
     {
       type: "photo",
@@ -52,7 +39,7 @@ const BIRTHDAY_CONFIG = {
     },
     {
       type: "video",
-      url: "https://www.youtube.com/watch?v=dQw4w9WgXcQ", // Replace with your YouTube or Google Drive video link
+      url: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
       caption: "Our favorite highlight reel 🎥",
       date: "Video Memory"
     },
