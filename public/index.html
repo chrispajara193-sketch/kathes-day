@@ -21,7 +21,8 @@
       <li><a href="#hero">Home</a></li>
       <li><a href="#wish-section">Make a Wish</a></li>
       <li><a href="#letter">Love Note</a></li>
-      <li><a href="#gallery">Memories</a></li>
+      <li><a href="#photos">Photos</a></li>
+      <li><a href="#videos">Videos</a></li>
     </ul>
   </nav>
 
@@ -35,7 +36,8 @@
       <p class="hero-subtitle" id="hero-subtitle"></p>
       <div class="hero-actions">
         <button id="confetti-btn" class="btn-rose-gold">✨ Pop Confetti ✨</button>
-        <a href="#gallery" class="btn-outline">View Memories ♡</a>
+        <a href="#photos" class="btn-outline">View Photos ♡</a>
+        <a href="#videos" class="btn-outline">Watch Videos 🎥</a>
       </div>
     </div>
   </header>
@@ -81,20 +83,21 @@
     </div>
   </section>
 
-  <section id="gallery" class="section gallery-section">
+  <!-- Separate Photo Gallery Section -->
+  <section id="photos" class="section gallery-section">
     <div class="container">
-      <h2 class="section-title">Precious Memories</h2>
-      <p class="section-subtitle">Photos & videos captured for your special day</p>
+      <h2 class="section-title">Captured Moments</h2>
+      <p class="section-subtitle">Our favorite photos together 📸</p>
+      <div class="gallery-grid" id="photos-grid"></div>
+    </div>
+  </section>
 
-      <div class="filter-tabs">
-        <button class="filter-btn active" data-filter="all">All Memories</button>
-        <button class="filter-btn" data-filter="photo">📸 Photos</button>
-        <button class="filter-btn" data-filter="video">🎥 Videos</button>
-      </div>
-
-      <div class="gallery-grid" id="gallery-grid">
-
-      </div>
+  <!-- Separate Video Memories Section -->
+  <section id="videos" class="section gallery-section video-section">
+    <div class="container">
+      <h2 class="section-title">Video Memories</h2>
+      <p class="section-subtitle">Special clips & highlights just for you 🎥</p>
+      <div class="gallery-grid videos-grid" id="videos-grid"></div>
     </div>
   </section>
   
