@@ -239,10 +239,8 @@ function setupIntroOverlay(fx, music) {
   const introCandles = document.querySelectorAll('#intro-candles-row .intro-candle');
   const statusEl = document.getElementById('intro-status');
   let unlocked = false;
-  let revealTimer = null;
 
   function finishUnlock() {
-    if (revealTimer) clearTimeout(revealTimer);
     overlay.classList.add('unlocked');
     document.body.classList.remove('locked');
   }
@@ -256,22 +254,19 @@ function setupIntroOverlay(fx, music) {
     statusEl.textContent = '✨ Wish granted! ✨';
     fx.burstConfetti(160);
 
+    // 1. Fade out the candle card
     setTimeout(() => {
       introCard.classList.add('fade-out');
     }, 650);
 
+    // 2. Show "From Vision to Soul" message screen
     setTimeout(() => {
       msgScreen.classList.add('show');
     }, 1050);
 
-    revealTimer = setTimeout(finishUnlock, 7550);
+    // 3. Disappear at 14 seconds (14000 ms) to match the song's 1st stanza
+    setTimeout(finishUnlock, 14000);
   }
-
-  msgScreen.addEventListener('click', () => {
-    if (msgScreen.classList.contains('show')) {
-      finishUnlock();
-    }
-  });
 
   introCandles.forEach(candle => {
     candle.addEventListener('click', () => {
@@ -287,7 +282,6 @@ function setupIntroOverlay(fx, music) {
     });
   });
 }
-
 function populatePageContent(data) {
   const name = data.celebrantName || 'Birthday Girl';
   document.title = `Happy Birthday ${name}! ✨`;
