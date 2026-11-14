@@ -6,7 +6,7 @@ const BIRTHDAY_CONFIG = {
 
   letterTitle: "A Special Note For You",
   letterBody: [
-    "Hi love! Happy, happy birthday to the loveliest, kindest, most caring, and beautiful girl I've ever known. I hope you never forget how special you are and how much you deserve all the happiness in this world.",
+    "Hi love! Happy, happy birthday to the loveliest, kindest, most caring, and beautiful woman I've ever known. I hope you never forget how special you are and how much you deserve all the happiness in this world.",
     "I hope you enjoy your day and feel how loved and appreciated you are.",
     "Sana magustuhan mo itong simple gift ko, because it's given with all my heart. Always remember that I'm here for you, through the good days and even the difficult ones. I'll always be here to support you, appreciate you, and remind you how wonderful you are. I love you so much, and I miss you. Enjoy your special day, love!"
   ],
