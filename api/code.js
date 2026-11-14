@@ -17,7 +17,7 @@ const BIRTHDAY_CONFIG = {
   // ------------------------------------------------------------------
   videos: [
     {
-      url: "/media/Raphael.mp4",
+      url: "https://drive.google.com/file/d/1mt88lH-0hGUjpK2k9u18gz58ja90-JF2/view?usp=sharing",
       caption: "Happy Birthday greeting for you! 🎂✨",
       date: "From: Raprap"
     },
