@@ -1,4 +1,12 @@
 document.addEventListener('DOMContentLoaded', async () => {
+  if ('scrollRestoration' in history) {
+    history.scrollRestoration = 'manual';
+  }
+  if (window.location.hash) {
+    history.replaceState(null, '', window.location.pathname + window.location.search);
+  }
+  window.scrollTo(0, 0);
+  
   const fx = initSparkleAndConfettiEngine();
   window.triggerBirthdayConfetti = (count = 130) => fx.burstConfetti(count);
 
@@ -240,9 +248,21 @@ function setupIntroOverlay(fx, music) {
   const statusEl = document.getElementById('intro-status');
   let unlocked = false;
 
+  function scrollToTopNow() {
+    const html = document.documentElement;
+    const prev = html.style.scrollBehavior;
+    html.style.scrollBehavior = 'auto';
+    window.scrollTo(0, 0);
+    html.scrollTop = 0;
+    document.body.scrollTop = 0;
+    html.style.scrollBehavior = prev;
+  }
+
   function finishUnlock() {
     overlay.classList.add('unlocked');
     document.body.classList.remove('locked');
+    scrollToTopNow();
+    requestAnimationFrame(scrollToTopNow);
   }
 
   function unlockSite() {
