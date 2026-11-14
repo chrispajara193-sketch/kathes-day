@@ -4,7 +4,8 @@ const BIRTHDAY_CONFIG = {
   birthdayDate: "November 22, 2026",
   backgroundSong: [
     "https://www.youtube.com/watch?v=Y7MLgSQgjzE&list=RDY7MLgSQgjzE&start_radio=1",
-    "https://www.youtube.com/watch?v=JRipNfX7ahQ&list=RDJRipNfX7ahQ&start_radio=1"
+    "https://www.youtube.com/watch?v=JRipNfX7ahQ&list=RDJRipNfX7ahQ&start_radio=1",
+    "https://www.youtube.com/watch?v=c-NNMb1DhUE&list=RDc-NNMb1DhUE&start_radio=1"
     ],
   heroSubtitle: "Wishing the happiest of birthdays to the brightest star in the room. May your year ahead sparkle as brightly as you do!",
 
