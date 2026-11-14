@@ -34,21 +34,21 @@ const BIRTHDAY_CONFIG = {
   photos: [
     {
       url: "https://drive.google.com/file/d/1iPxmFWVrwg00GU0Tl0m_aX-JMjlGBtr0/view?usp=sharing",
-      caption: "Sparkles & Birthday Vibes ✨",
+      caption: "Sparkle Vibes ✨",
       date: "Favorite Moment"
     },
     {
-      url: "https://images.unsplash.com/photo-1513151233558-d860c5398176?auto=format&fit=crop&w=900&q=80",
+      url: "https://drive.google.com/file/d/163Pltkhzoti0Lmxilt8tQxm3hWxZE6Dj/view?usp=sharing",
       caption: "Midnight skies & endless laughs 🥂",
       date: "Special Night"
     },
     {
-      url: "https://images.unsplash.com/photo-1464349153735-7db50ed83c84?auto=format&fit=crop&w=900&q=80",
+      url: "https://drive.google.com/file/d/1dB3jh66LexaIuRwKTg0Ov0Z-HMTVg-vM/view?usp=sharing",
       caption: "Sweetest memories together 💖",
       date: "Throwback"
     },
     {
-      url: "https://images.unsplash.com/photo-1558636508-e0db3814bd1d?auto=format&fit=crop&w=900&q=80",
+      url: "https://drive.google.com/file/d/17rJuFkV2gAXWyZkeVWmRg5HBrCZ-84E7/view?usp=sharing",
       caption: "Cheers to another fabulous year! 🎂",
       date: "Birthday Cake"
     }
