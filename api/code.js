@@ -220,6 +220,26 @@ const BIRTHDAY_CONFIG = {
       url: "https://drive.google.com/file/d/1K3z-sd8mQcW3MLwgMn3rgC6jpaka574r/view?usp=sharing",
       caption: "Some moments never fade, no matter how much time passes.",
       date: ""
+    },
+    {
+      url: "https://drive.google.com/file/d/1ePLRjRAhrZ80by4JGxmxbm02Y8MMUNCM/view?usp=sharing",
+      caption: "",
+      date: ""
+    },
+    {
+      url: "https://drive.google.com/file/d/117j9KPqerYjyU2GvGNVYpg-5SDaa8sjed/view?usp=sharing",
+      caption: "",
+      date: ""
+    },
+    {
+      url: "https://drive.google.com/file/d/1M-sR1UF9f8GICYD4dKQuBNFcyWsG5aaK/view?usp=sharing",
+      caption: "",
+      date: ""
+    },
+    {
+      url: "https://drive.google.com/file/d/12yqVziW3_3jLLHyPv__0R-JdA3Vo1deK/view?usp=sharing",
+      caption: "",
+      date: ""
     }
   ]
 };
