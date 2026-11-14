@@ -13,7 +13,23 @@ const BIRTHDAY_CONFIG = {
   letterSignature: "With all my love, Always ♡",
 
   // ------------------------------------------------------------------
-  // 1. ADD YOUR PHOTOS MANUALLY HERE
+  // 1. ADD BIRTHDAY VIDEO GREETINGS MANUALLY HERE (SHOWN ABOVE PHOTOS)
+  // ------------------------------------------------------------------
+  videos: [
+    {
+      url: "https://assets.mixkit.co/videos/preview/mixkit-woman-blowing-sparklers-at-night-41918-large.mp4",
+      caption: "Happy Birthday greeting for you! 🎂✨",
+      date: "From: Everyone"
+    },
+    {
+      url: "", // Paste your YouTube, Google Drive, or .mp4 greeting link here
+      caption: "A special birthday wish just for you 🎥💖",
+      date: "Birthday Greeting"
+    }
+  ],
+
+  // ------------------------------------------------------------------
+  // 2. ADD YOUR PHOTOS MANUALLY HERE (SHOWN BELOW VIDEO GREETINGS)
   // ------------------------------------------------------------------
   photos: [
     {
@@ -35,22 +51,6 @@ const BIRTHDAY_CONFIG = {
       url: "https://images.unsplash.com/photo-1558636508-e0db3814bd1d?auto=format&fit=crop&w=900&q=80",
       caption: "Cheers to another fabulous year! 🎂",
       date: "Birthday Cake"
-    }
-  ],
-
-  // ------------------------------------------------------------------
-  // 2. ADD YOUR VIDEOS MANUALLY HERE
-  // ------------------------------------------------------------------
-  videos: [
-    {
-      url: "https://assets.mixkit.co/videos/preview/mixkit-woman-blowing-sparklers-at-night-41918-large.mp4",
-      caption: "Make a wish under the stars 🎆",
-      date: "Celebration Clip"
-    },
-    {
-      url: "", // Paste your YouTube, Google Drive, or .mp4 link here (skipped while empty)
-      caption: "Our favorite highlight reel 🎥",
-      date: "Video Memory"
     }
   ]
 };
