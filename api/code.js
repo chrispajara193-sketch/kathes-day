@@ -228,7 +228,7 @@ const BIRTHDAY_CONFIG = {
       date: ""
     },
     {
-      url: "https://drive.google.com/file/d/117j9KPqerYjyU2GvGNVYpg-5SDaa8sjed/view?usp=sharing",
+      url: "https://drive.google.com/file/d/17j9KPqerYjyU2GvGNVYpg-5SDaa8sjed/view?usp=sharing",
       caption: "",
       date: ""
     },
