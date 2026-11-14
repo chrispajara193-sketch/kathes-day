@@ -1,14 +1,15 @@
 document.addEventListener('DOMContentLoaded', async () => {
   const fx = initSparkleAndConfettiEngine();
-  fx.burstConfetti(70);
+  window.triggerBirthdayConfetti = (count = 130) => fx.burstConfetti(count);
+
+  // Setup Intro Gate & Inside Candles separately
+  setupIntroOverlay(fx);
+  setupCandles();
+  setupLightbox();
 
   document.getElementById('confetti-btn').addEventListener('click', () => {
     fx.burstConfetti(120);
   });
-  window.triggerBirthdayConfetti = () => fx.burstConfetti(130);
-
-  setupCandles();
-  setupLightbox();
 
   let data = {
     celebrantName: "Kathe",
@@ -40,9 +41,62 @@ document.addEventListener('DOMContentLoaded', async () => {
   renderSection('photos-grid', photos, 'photo');
 });
 
+function setupIntroOverlay(fx) {
+  const overlay = document.getElementById('intro-overlay');
+  const introCandles = document.querySelectorAll('#intro-candles-row .intro-candle');
+  const statusEl = document.getElementById('intro-status');
+  const blowAllBtn = document.getElementById('blow-all-btn');
+  let unlocked = false;
+
+  function unlockSite() {
+    if (unlocked) return;
+    unlocked = true;
+
+    statusEl.textContent = '✨ Wish granted! Opening your surprise... ✨';
+    blowAllBtn.disabled = true;
+    blowAllBtn.style.opacity = '0.7';
+    fx.burstConfetti(160);
+
+    setTimeout(() => {
+      overlay.classList.add('unlocked');
+      document.body.classList.remove('locked');
+    }, 950);
+  }
+
+  function checkIntroCandles() {
+    const remaining = Array.from(introCandles).filter(c => !c.classList.contains('blown')).length;
+    if (remaining === 0) {
+      unlockSite();
+    } else {
+      statusEl.textContent = `Tap each glowing flame to blow it out ✨ (${remaining} left)`;
+    }
+  }
+
+  introCandles.forEach(candle => {
+    candle.addEventListener('click', () => {
+      if (candle.classList.contains('blown') || unlocked) return;
+      candle.classList.add('blown');
+      checkIntroCandles();
+    });
+  });
+
+  blowAllBtn.addEventListener('click', () => {
+    if (unlocked) return;
+    introCandles.forEach((candle, index) => {
+      setTimeout(() => {
+        candle.classList.add('blown');
+        if (index === introCandles.length - 1) {
+          checkIntroCandles();
+        }
+      }, index * 160);
+    });
+  });
+}
+
 function populatePageContent(data) {
   const name = data.celebrantName || 'Birthday Girl';
   document.title = `Happy Birthday ${name}! ✨`;
+  document.getElementById('intro-name').textContent = name;
   document.getElementById('nav-name').textContent = '♡ ' + name;
   document.getElementById('hero-name').textContent = name;
   document.getElementById('footer-name').textContent = name;
@@ -171,7 +225,7 @@ function renderSection(gridId, items, mediaType) {
 }
 
 function setupCandles() {
-  const candles = document.querySelectorAll('.candle');
+  const candles = document.querySelectorAll('#candles-row .candle');
   const wishResult = document.getElementById('wish-result');
   const relightBtn = document.getElementById('relight-btn');
   const instruction = document.getElementById('wish-instruction');
@@ -184,7 +238,7 @@ function setupCandles() {
         wishResult.classList.remove('hidden');
         relightBtn.classList.remove('hidden');
         instruction.textContent = 'All candles blown out!';
-        if (window.triggerBirthdayConfetti) window.triggerBirthdayConfetti();
+        if (window.triggerBirthdayConfetti) window.triggerBirthdayConfetti(130);
       }
     });
   });
