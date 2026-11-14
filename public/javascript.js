@@ -265,7 +265,7 @@ function setupIntroOverlay(fx, music) {
     }, 1050);
 
     // 3. Disappear at 14 seconds (14000 ms) to match the song's 1st stanza
-    setTimeout(finishUnlock, 17000);
+    setTimeout(finishUnlock, 15050);
   }
 
   introCandles.forEach(candle => {
