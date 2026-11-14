@@ -41,6 +41,26 @@ const BIRTHDAY_CONFIG = {
       url: "https://drive.google.com/file/d/1NBZHyPm6fmuxeQUE0LZECeKIFWNjve4X/view?usp=sharing",
       caption: "Happy Birthday ate kathe 🎥💖",
       date: "From: Tyler & Pia"
+    },
+    {
+      url: "https://drive.google.com/file/d/1v7GnHEHmHcZB94ZwyOb_3-Rg9oSCWE2K/view?usp=sharing",
+      caption: "Happy Birthday ate kathe 🎥💖",
+      date: "From: Chloe & Saydi"
+    },
+    {
+      url: "https://drive.google.com/file/d/1mKnZ0GfRlSlBAsM8ytvBoMow_hYVV7aQ/view?usp=sharing",
+      caption: "Happy Birthday ate kathe 🎥💖",
+      date: "From: Ashley, Tita Len and Lola"
+    },
+    {
+      url: "https://drive.google.com/file/d/1OSJ7foGWjmqNxG-ZBjQgXZlFluVB7psi/view?usp=sharing",
+      caption: "Happy Birthday ate kathe 🎥💖",
+      date: "From: Kurth"
+    },
+    {
+      url: "https://drive.google.com/file/d/16-kNHZn3uOgSR6hF6B5eecBg8mAwZtJW/view?usp=sharing",
+      caption: "Happy Birthday ate kathe 🎥💖",
+      date: "From: Marcus"
     }
   ],
 
