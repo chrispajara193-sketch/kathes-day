@@ -74,87 +74,87 @@ const BIRTHDAY_CONFIG = {
     {
       url: "https://drive.google.com/file/d/1iPxmFWVrwg00GU0Tl0m_aX-JMjlGBtr0/view?usp=sharing",
       caption: "Sparkle Vibes ✨",
-      date: "Favorite Moment"
+      date: ""
     },
     {
       url: "https://drive.google.com/file/d/163Pltkhzoti0Lmxilt8tQxm3hWxZE6Dj/view?usp=sharing",
       caption: "Midnight skies & endless laughs 🥂",
-      date: "Special Night"
+      date: ""
     },
     {
       url: "https://drive.google.com/file/d/1dB3jh66LexaIuRwKTg0Ov0Z-HMTVg-vM/view?usp=sharing",
       caption: "Sweetest memories together 💖",
-      date: "Throwback"
+      date: ""
     },
     {
       url: "https://drive.google.com/file/d/17rJuFkV2gAXWyZkeVWmRg5HBrCZ-84E7/view?usp=sharing",
       caption: "Cheers to another fabulous year! 🎂",
-      date: "Birthday Cake"
+      date: ""
     },
     {
       url: "https://drive.google.com/file/d/1wJcTDwyQEQIs3WiA3JIFRbjcjN6cL9Xk/view?usp=sharing",
       caption: "Sweetest memories together 💖",
-      date: "Throwback"
+      date: ""
     },
     {
       url: "https://drive.google.com/file/d/1f6lvAedH7BwzGne6MbOnsIrVN9KmsfZp/view?usp=sharing",
       caption: "Sweetest memories together 💖",
-      date: "Throwback"
+      date: ""
     },
     {
       url: "https://drive.google.com/file/d/1LzfIx0MRemwVOHwobyTVyvrZWuZWQa2x/view?usp=sharing",
       caption: "Sweetest memories together 💖",
-      date: "Throwback"
+      date: ""
     },
     {
       url: "https://drive.google.com/file/d/1tJW7JfQr4VGBLIKrEYocqnyv47sSR1FZ/view?usp=sharing",
       caption: "Sweetest memories together 💖",
-      date: "Throwback"
+      date: ""
     },
     {
       url: "https://drive.google.com/file/d/1dMkkebg1L--5uhZLSWYWL2y-AQt3IbaN/view?usp=sharing",
       caption: "Sweetest memories together 💖",
-      date: "Throwback"
+      date: ""
     },
     {
       url: "https://drive.google.com/file/d/18EGoCXYTx8-cMp0tl8xdZWoIA2pEbiv-/view?usp=sharing",
       caption: "With Thea",
-      date: "Throwback Literal"
+      date: ""
     },
     {
       url: "https://drive.google.com/file/d/1cb_UwvV7w7s9pzkKPL07toDdiAYB4lrg",
       caption: "With Thea and Sam",
-      date: "Throwback Literal"
+      date: ""
     },
     {
       url: "https://drive.google.com/file/d/14HB2yiX0vJSXU8GuYSgXOxqstY_DBTuW/view?usp=sharing",
       caption: "With Samantha",
-      date: "Throwback Literal"
+      date: ""
     },
     {
       url: "https://drive.google.com/file/d/1fzFa75gp5x6IqfXjjf6mvSxvigg2BuVl/view?usp=sharing",
       caption: "With Adiepot",
-      date: "Throwback Literal"
+      date: ""
     },
     {
       url: "https://drive.google.com/file/d/1G8isKaCjBUNAacsRax0fWrISXafkVfs4/view?usp=sharing",
       caption: "With Adiepot",
-      date: "Throwback Literal"
+      date: ""
     },
     {
       url: "https://drive.google.com/file/d/15uvYJiX6MFq4QEib27se-MnQAmdzKm01/view?usp=sharing",
       caption: "With Thea and Ashley",
-      date: "Throwback Literal"
+      date: ""
     },
     {
       url: "https://drive.google.com/file/d/1fPYTPFYulMS6RO0ZsFZqYWXfNUJ1YPnu/view?usp=sharing",
       caption: "With Thea and Ashley",
-      date: "Throwback Literal"
+      date: ""
     },
     {
       url: "https://drive.google.com/file/d/1MsC94-bnonzjur7DUNOALXIjzXqDVIDk/view?usp=sharing",
       caption: "Smileeeee",
-      date: "Throwback Literal"
+      date: ""
     },
     {
       url: "https://drive.google.com/file/d/11m70dFQEgg46N3-t6u2T_qcGL0mMtxax/view?usp=sharing",
