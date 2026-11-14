@@ -239,6 +239,13 @@ function setupIntroOverlay(fx, music) {
   const introCandles = document.querySelectorAll('#intro-candles-row .intro-candle');
   const statusEl = document.getElementById('intro-status');
   let unlocked = false;
+  let revealTimer = null;
+
+  function finishUnlock() {
+    if (revealTimer) clearTimeout(revealTimer);
+    overlay.classList.add('unlocked');
+    document.body.classList.remove('locked');
+  }
 
   function unlockSite() {
     if (unlocked) return;
@@ -254,17 +261,21 @@ function setupIntroOverlay(fx, music) {
       introCard.classList.add('fade-out');
     }, 650);
 
-    // 2. Show "From Vision to Soul"
+    // 2. Show "From Vision to Soul" message screen
     setTimeout(() => {
       msgScreen.classList.add('show');
     }, 1050);
 
-    // 3. Fade away overlay and reveal the website
-    setTimeout(() => {
-      overlay.classList.add('unlocked');
-      document.body.classList.remove('locked');
-    }, 3900);
+    // 3. Auto-open the website after 6.5 seconds of reading (or sooner if she taps)
+    revealTimer = setTimeout(finishUnlock, 7550);
   }
+
+  // Allow tapping anywhere on the message screen to enter immediately
+  msgScreen.addEventListener('click', () => {
+    if (msgScreen.classList.contains('show')) {
+      finishUnlock();
+    }
+  });
 
   introCandles.forEach(candle => {
     candle.addEventListener('click', () => {
