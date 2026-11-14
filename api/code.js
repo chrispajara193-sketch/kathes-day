@@ -17,9 +17,9 @@ const BIRTHDAY_CONFIG = {
   // ------------------------------------------------------------------
   videos: [
     {
-      url: "https://assets.mixkit.co/videos/preview/mixkit-woman-blowing-sparklers-at-night-41918-large.mp4",
+      url: "/media/Raphael.mp4",
       caption: "Happy Birthday greeting for you! 🎂✨",
-      date: "From: Everyone"
+      date: "From: Raprap"
     },
     {
       url: "", // Paste your YouTube, Google Drive, or .mp4 greeting link here
