@@ -48,7 +48,6 @@ document.addEventListener('DOMContentLoaded', async () => {
   renderSection('videos-grid', videos, 'video', music);
   renderSection('photos-grid', photos, 'photo', music);
 
-  // Supports backgroundSongs: [...], backgroundSong: [...], or backgroundSong: "..."
   const rawSongs = data.backgroundSongs ?? data.backgroundSong;
   const songList = Array.isArray(rawSongs) ? rawSongs : (rawSongs ? [rawSongs] : []);
   music.setSongs(songList);
@@ -61,28 +60,70 @@ function extractYouTubeId(url) {
 }
 
 function setupMusic() {
-  const audio = document.getElementById('bg-music');
   const toggleBtn = document.getElementById('music-toggle');
+  const ytWrap = document.getElementById('yt-bg-wrap');
 
   const NORMAL_VOL = 45;
   const DUCKED_VOL = 8;
-
-  audio.loop = false;
-  audio.volume = NORMAL_VOL / 100;
+  const CROSSFADE_LEAD_SEC = 5.5; // Start fading in Song 2 this many seconds BEFORE Song 1 ends
+  const CROSSFADE_MS = 4000;      // 4-second smooth overlap crossfade
 
   let playlist = [];
   let songIndex = 0;
-  let mode = null; // 'youtube' | 'audio'
-  let ytPlayer = null;
-  let ytReady = false;
-  let pendingPlay = false;
+  let activeIdx = 0;
   let isPlaying = false;
   let userMuted = false;
   let isDucked = false;
-  let currentVol = NORMAL_VOL;
+  let isCrossfading = false;
   let fadeTimer = null;
-  let isFadingOutForNext = false;
-  let isTransitioningIn = false;
+  let crossfadeTimer = null;
+
+  // Queue for loading the YouTube IFrame API once for both decks
+  let ytApiRequested = false;
+  const ytReadyCallbacks = [];
+
+  function ensureYouTubeAPI(cb) {
+    if (window.YT && window.YT.Player) {
+      cb();
+      return;
+    }
+    ytReadyCallbacks.push(cb);
+    if (!ytApiRequested) {
+      ytApiRequested = true;
+      window.onYouTubeIframeAPIReady = () => {
+        while (ytReadyCallbacks.length > 0) {
+          const fn = ytReadyCallbacks.shift();
+          fn();
+        }
+      };
+      const tag = document.createElement('script');
+      tag.src = 'https://' + 'www.youtube.com/iframe_api';
+      document.head.appendChild(tag);
+    }
+  }
+
+  function createDeck(suffix) {
+    const audio = new Audio();
+    audio.loop = false;
+    audio.preload = 'auto';
+    audio.volume = 0;
+
+    return {
+      suffix,
+      containerId: 'yt-bg-player-' + suffix,
+      audio,
+      mode: null, // 'youtube' | 'audio'
+      ytPlayer: null,
+      ytReady: false,
+      vol: 0,
+      priming: false,
+      primed: false,
+      pendingPlay: false,
+      pendingPrime: false
+    };
+  }
+
+  const decks = [createDeck('a'), createDeck('b')];
 
   function targetVol() {
     return isDucked ? DUCKED_VOL : NORMAL_VOL;
@@ -93,25 +134,30 @@ function setupMusic() {
     toggleBtn.textContent = isPlaying ? '🎵 Music: On' : '🔇 Music: Off';
   }
 
-  function applyVolume(vol) {
-    currentVol = Math.max(0, Math.min(100, vol));
-    audio.volume = currentVol / 100;
-    if (mode === 'youtube' && ytReady && ytPlayer && typeof ytPlayer.setVolume === 'function') {
-      ytPlayer.setVolume(Math.round(currentVol));
+  function setDeckVol(deck, vol) {
+    deck.vol = Math.max(0, Math.min(100, vol));
+    deck.audio.volume = deck.vol / 100;
+    if (deck.mode === 'youtube' && deck.ytReady && deck.ytPlayer && typeof deck.ytPlayer.setVolume === 'function') {
+      deck.ytPlayer.setVolume(Math.round(deck.vol));
     }
   }
 
-  function fadeTo(goalVol, durationMs = 360) {
+  function fadeActiveTo(goalVol, durationMs = 360) {
     if (fadeTimer) clearInterval(fadeTimer);
-    const startVol = currentVol;
+    const deck = decks[activeIdx];
+    const startVol = deck.vol;
     const intervalMs = 40;
     const steps = Math.max(1, Math.round(durationMs / intervalMs));
     let step = 0;
 
     fadeTimer = setInterval(() => {
+      if (isCrossfading) {
+        clearInterval(fadeTimer);
+        fadeTimer = null;
+        return;
+      }
       step++;
-      const nextVol = startVol + ((goalVol - startVol) * (step / steps));
-      applyVolume(nextVol);
+      setDeckVol(deck, startVol + ((goalVol - startVol) * (step / steps)));
       if (step >= steps) {
         clearInterval(fadeTimer);
         fadeTimer = null;
@@ -119,172 +165,248 @@ function setupMusic() {
     }, intervalMs);
   }
 
-  function initYouTubePlayer(videoId) {
-    const createPlayer = () => {
-      ytPlayer = new YT.Player('yt-bg-player', {
-        height: '2',
-        width: '2',
-        videoId: videoId,
-        playerVars: {
-          autoplay: 0,
-          controls: 0,
-          disablekb: 1,
-          fs: 0,
-          playsinline: 1,
-          enablejsapi: 1,
-          origin: window.location.origin
-        },
-        events: {
-          onReady: (e) => {
-            ytReady = true;
-            e.target.setVolume(isTransitioningIn ? 0 : targetVol());
-            if (pendingPlay && !userMuted) {
-              pendingPlay = false;
-              e.target.playVideo();
-            }
-          },
-          onStateChange: (e) => {
-            if (e.data === YT.PlayerState.PLAYING) {
-              isPlaying = true;
-              updateBtn();
-              if (isTransitioningIn) {
-                isTransitioningIn = false;
-                fadeTo(targetVol(), 2000);
-              }
-            } else if (e.data === YT.PlayerState.PAUSED) {
-              isPlaying = false;
-              updateBtn();
-            } else if (e.data === YT.PlayerState.ENDED) {
-              advanceToNextSong();
-            }
-          },
-          onError: (e) => {
-            console.warn('YouTube background song error (some official music videos block embedding):', e.data);
-            isPlaying = false;
-            updateBtn();
-          }
-        }
-      });
-    };
-
-    if (window.YT && window.YT.Player) {
-      createPlayer();
-    } else {
-      window.onYouTubeIframeAPIReady = createPlayer;
-      const tag = document.createElement('script');
-      tag.src = 'https://' + 'www.youtube.com/iframe_api';
-      document.head.appendChild(tag);
+  function playDeck(deck) {
+    if (deck.mode === 'audio') {
+      deck.audio.play().catch(() => {});
+    } else if (deck.mode === 'youtube') {
+      if (deck.ytReady && deck.ytPlayer) {
+        deck.ytPlayer.unMute();
+        deck.ytPlayer.playVideo();
+      } else {
+        deck.pendingPlay = true;
+      }
     }
   }
 
-  function loadAndPlayCurrent(withFadeIn) {
-    if (playlist.length === 0 || userMuted) return;
-
-    const url = playlist[songIndex];
-    const ytId = extractYouTubeId(url);
-    isFadingOutForNext = false;
-    isTransitioningIn = withFadeIn;
-
-    if (withFadeIn) {
-      applyVolume(0);
-    } else {
-      applyVolume(targetVol());
+  function pauseDeck(deck) {
+    if (deck.mode === 'audio') {
+      deck.audio.pause();
+    } else if (deck.mode === 'youtube' && deck.ytReady && deck.ytPlayer) {
+      deck.pendingPlay = false;
+      deck.ytPlayer.pauseVideo();
     }
+  }
+
+  // Silently prime the standby deck inside a real candle-tap so it starts instantly later
+  function primeStandbyDeck() {
+    if (playlist.length < 2) return;
+    const standby = decks[1 - activeIdx];
+    if (standby.primed || standby.priming) return;
+
+    if (standby.mode === 'youtube') {
+      if (standby.ytReady && standby.ytPlayer) {
+        standby.priming = true;
+        standby.ytPlayer.mute();
+        standby.ytPlayer.setVolume(0);
+        standby.ytPlayer.playVideo();
+      } else {
+        standby.pendingPrime = true;
+      }
+    } else if (standby.mode === 'audio') {
+      standby.priming = true;
+      standby.audio.muted = true;
+      standby.audio.play().then(() => {
+        standby.priming = false;
+        standby.primed = true;
+        standby.audio.pause();
+        standby.audio.currentTime = 0;
+        standby.audio.muted = false;
+      }).catch(() => {
+        standby.priming = false;
+      });
+    }
+  }
+
+  function cueDeckWithUrl(deck, url) {
+    const ytId = extractYouTubeId(url);
+    setDeckVol(deck, 0);
 
     if (ytId) {
-      if (mode === 'audio') audio.pause();
-      mode = 'youtube';
+      deck.audio.pause();
+      deck.mode = 'youtube';
 
-      if (ytReady && ytPlayer && typeof ytPlayer.loadVideoById === 'function') {
-        ytPlayer.setVolume(withFadeIn ? 0 : targetVol());
-        ytPlayer.loadVideoById(ytId);
-      } else {
-        pendingPlay = true;
-        if (!ytPlayer) initYouTubePlayer(ytId);
+      if (deck.ytPlayer && deck.ytReady && typeof deck.ytPlayer.cueVideoById === 'function') {
+        deck.ytPlayer.cueVideoById(ytId);
+      } else if (!deck.ytPlayer) {
+        ensureYouTubeAPI(() => {
+          deck.ytPlayer = new YT.Player(deck.containerId, {
+            height: '2',
+            width: '2',
+            videoId: ytId,
+            playerVars: {
+              autoplay: 0,
+              controls: 0,
+              disablekb: 1,
+              fs: 0,
+              playsinline: 1,
+              enablejsapi: 1,
+              origin: window.location.origin
+            },
+            events: {
+              onReady: (e) => {
+                deck.ytReady = true;
+                e.target.setVolume(Math.round(deck.vol));
+                if (deck.pendingPlay && !userMuted) {
+                  deck.pendingPlay = false;
+                  e.target.unMute();
+                  e.target.playVideo();
+                } else if (deck.pendingPrime) {
+                  deck.pendingPrime = false;
+                  deck.priming = true;
+                  e.target.mute();
+                  e.target.setVolume(0);
+                  e.target.playVideo();
+                }
+              },
+              onStateChange: (e) => {
+                // Finish silent priming as soon as playback starts
+                if (deck.priming && e.data === YT.PlayerState.PLAYING) {
+                  deck.priming = false;
+                  deck.primed = true;
+                  e.target.pauseVideo();
+                  e.target.seekTo(0, true);
+                  e.target.unMute();
+                  setDeckVol(deck, 0);
+                  return;
+                }
+
+                // Only update main UI state for the currently active deck
+                if (deck === decks[activeIdx] && !isCrossfading) {
+                  if (e.data === YT.PlayerState.PLAYING) {
+                    isPlaying = true;
+                    updateBtn();
+                  } else if (e.data === YT.PlayerState.PAUSED) {
+                    isPlaying = false;
+                    updateBtn();
+                  } else if (e.data === YT.PlayerState.ENDED) {
+                    if (playlist.length === 1) {
+                      e.target.seekTo(0, true);
+                      e.target.playVideo();
+                    } else {
+                      startCrossfade();
+                    }
+                  }
+                }
+              },
+              onError: (e) => {
+                console.warn('YouTube background song error:', e.data);
+                if (deck === decks[activeIdx]) {
+                  isPlaying = false;
+                  updateBtn();
+                }
+              }
+            }
+          });
+        });
       }
     } else {
-      if (mode === 'youtube' && ytReady && ytPlayer) ytPlayer.stopVideo();
-      mode = 'audio';
-      if (audio.src !== new URL(url, window.location.href).href) {
-        audio.src = url;
-      }
-      audio.play().then(() => {
-        isPlaying = true;
-        updateBtn();
-        if (withFadeIn) {
-          isTransitioningIn = false;
-          fadeTo(targetVol(), 2000);
-        }
-      }).catch(() => {});
+      if (deck.ytPlayer && deck.ytReady) deck.ytPlayer.stopVideo();
+      deck.mode = 'audio';
+      deck.audio.src = url;
+      deck.audio.load();
     }
   }
 
-  function advanceToNextSong() {
-    if (playlist.length === 0) return;
-    songIndex = (songIndex + 1) % playlist.length;
-    loadAndPlayCurrent(true);
-  }
-
-  audio.addEventListener('ended', () => {
-    if (mode === 'audio') advanceToNextSong();
+  decks.forEach(deck => {
+    deck.audio.addEventListener('ended', () => {
+      if (deck === decks[activeIdx] && deck.mode === 'audio' && !isCrossfading) {
+        if (playlist.length === 1) {
+          deck.audio.currentTime = 0;
+          deck.audio.play().catch(() => {});
+        } else {
+          startCrossfade();
+        }
+      }
+    });
   });
 
+  function startCrossfade() {
+    if (isCrossfading || playlist.length < 2 || userMuted) return;
+    isCrossfading = true;
+    if (fadeTimer) {
+      clearInterval(fadeTimer);
+      fadeTimer = null;
+    }
+
+    const outIdx = activeIdx;
+    const inIdx = 1 - activeIdx;
+    const outDeck = decks[outIdx];
+    const inDeck = decks[inIdx];
+
+    songIndex = (songIndex + 1) % playlist.length;
+
+    // Start the incoming song silently right away while outgoing song is still playing
+    inDeck.priming = false;
+    setDeckVol(inDeck, 0);
+    playDeck(inDeck);
+
+    const startOutVol = outDeck.vol;
+    const intervalMs = 50;
+    const steps = Math.round(CROSSFADE_MS / intervalMs);
+    let step = 0;
+
+    if (crossfadeTimer) clearInterval(crossfadeTimer);
+    crossfadeTimer = setInterval(() => {
+      step++;
+      const progress = Math.min(1, step / steps);
+
+      setDeckVol(outDeck, startOutVol * (1 - progress));
+      setDeckVol(inDeck, targetVol() * progress);
+
+      if (progress >= 1) {
+        clearInterval(crossfadeTimer);
+        crossfadeTimer = null;
+        pauseDeck(outDeck);
+        setDeckVol(outDeck, 0);
+
+        activeIdx = inIdx;
+        isCrossfading = false;
+
+        // Pre-cue the NEXT song on the now-idle deck so it's ready for the next crossfade
+        const upcomingUrl = playlist[(songIndex + 1) % playlist.length];
+        cueDeckWithUrl(outDeck, upcomingUrl);
+      }
+    }, intervalMs);
+  }
+
+  // Watch playback progress to trigger crossfade 5.5 seconds BEFORE current song ends
   setInterval(() => {
-    if (!isPlaying || userMuted || isFadingOutForNext || playlist.length === 0) return;
+    if (!isPlaying || userMuted || isCrossfading || playlist.length < 2) return;
+    const deck = decks[activeIdx];
 
-    if (mode === 'youtube' && ytReady && ytPlayer && typeof ytPlayer.getDuration === 'function') {
-      const dur = ytPlayer.getDuration();
-      const cur = ytPlayer.getCurrentTime();
-      if (dur > 8 && cur > 2 && (dur - cur) <= 2.5) {
-        isFadingOutForNext = true;
-        fadeTo(0, 2000);
+    if (deck.mode === 'youtube' && deck.ytReady && deck.ytPlayer && typeof deck.ytPlayer.getDuration === 'function') {
+      const dur = deck.ytPlayer.getDuration();
+      const cur = deck.ytPlayer.getCurrentTime();
+      if (dur > 12 && cur > 3 && (dur - cur) <= CROSSFADE_LEAD_SEC) {
+        startCrossfade();
       }
-    } else if (mode === 'audio' && audio.duration > 8 && audio.currentTime > 2) {
-      if ((audio.duration - audio.currentTime) <= 2.5) {
-        isFadingOutForNext = true;
-        fadeTo(0, 2000);
-      }
-    }
-  }, 400);
-
-  function resumeCurrent() {
-    if (playlist.length === 0 || userMuted) return;
-    applyVolume(targetVol());
-    if (mode === 'audio') {
-      audio.play().then(() => {
-        isPlaying = true;
-        updateBtn();
-      }).catch(() => {});
-    } else if (mode === 'youtube') {
-      if (ytReady && ytPlayer) {
-        ytPlayer.playVideo();
-      } else {
-        pendingPlay = true;
+    } else if (deck.mode === 'audio' && deck.audio.duration > 12 && deck.audio.currentTime > 3) {
+      if ((deck.audio.duration - deck.audio.currentTime) <= CROSSFADE_LEAD_SEC) {
+        startCrossfade();
       }
     }
-  }
-
-  function pauseCurrent() {
-    if (mode === 'audio') {
-      audio.pause();
-      isPlaying = false;
-      updateBtn();
-    } else if (mode === 'youtube' && ytReady && ytPlayer) {
-      pendingPlay = false;
-      ytPlayer.pauseVideo();
-      isPlaying = false;
-      updateBtn();
-    }
-  }
+  }, 350);
 
   toggleBtn.addEventListener('click', () => {
     if (playlist.length === 0) return;
     if (isPlaying) {
       userMuted = true;
-      pauseCurrent();
+      isPlaying = false;
+      if (crossfadeTimer) {
+        clearInterval(crossfadeTimer);
+        crossfadeTimer = null;
+        isCrossfading = false;
+      }
+      pauseDeck(decks[0]);
+      pauseDeck(decks[1]);
+      updateBtn();
     } else {
       userMuted = false;
-      resumeCurrent();
+      isPlaying = true;
+      setDeckVol(decks[activeIdx], targetVol());
+      playDeck(decks[activeIdx]);
+      primeStandbyDeck();
+      updateBtn();
     }
   });
 
@@ -296,36 +418,41 @@ function setupMusic() {
         .filter(Boolean);
       if (playlist.length === 0) return;
 
-      songIndex = 0;
-      const firstUrl = playlist[0];
-      const ytId = extractYouTubeId(firstUrl);
+      // Build the two hidden YouTube player slots automatically
+      ytWrap.innerHTML = `<div id="${decks[0].containerId}"></div><div id="${decks[1].containerId}"></div>`;
 
+      songIndex = 0;
+      activeIdx = 0;
       toggleBtn.classList.remove('hidden');
-      if (ytId) {
-        mode = 'youtube';
-        initYouTubePlayer(ytId);
-      } else {
-        mode = 'audio';
-        audio.src = firstUrl;
+
+      cueDeckWithUrl(decks[0], playlist[0]);
+      if (playlist.length > 1) {
+        cueDeckWithUrl(decks[1], playlist[1]);
       }
       updateBtn();
     },
+    prepareNext() {
+      primeStandbyDeck();
+    },
     startIfEnabled() {
-      resumeCurrent();
+      if (playlist.length === 0 || userMuted) return;
+      isPlaying = true;
+      setDeckVol(decks[activeIdx], targetVol());
+      playDeck(decks[activeIdx]);
+      primeStandbyDeck();
+      updateBtn();
     },
     duckForVideo() {
-      if (mode && isPlaying && !userMuted && !isFadingOutForNext) {
-        isDucked = true;
-        fadeTo(DUCKED_VOL, 360);
-      } else {
-        isDucked = true;
+      isDucked = true;
+      if (playlist.length > 0 && isPlaying && !userMuted && !isCrossfading) {
+        fadeActiveTo(DUCKED_VOL, 360);
       }
     },
     restoreAfterVideo() {
       if (isDucked) {
         isDucked = false;
-        if (!isFadingOutForNext && !isTransitioningIn) {
-          fadeTo(NORMAL_VOL, 360);
+        if (playlist.length > 0 && isPlaying && !userMuted && !isCrossfading) {
+          fadeActiveTo(NORMAL_VOL, 360);
         }
       }
     }
@@ -381,6 +508,9 @@ function setupIntroOverlay(fx, music) {
     candle.addEventListener('click', () => {
       if (candle.classList.contains('blown') || unlocked) return;
       candle.classList.add('blown');
+
+      // Silently pre-warm Song 2 on the very first candle tap!
+      music.prepareNext();
 
       const remaining = Array.from(introCandles).filter(c => !c.classList.contains('blown')).length;
       if (remaining === 0) {
