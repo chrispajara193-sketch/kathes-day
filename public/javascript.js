@@ -13,12 +13,13 @@ document.addEventListener('DOMContentLoaded', async () => {
   let data = {
     celebrantName: "Kathe",
     tagline: "✨ Celebrating Another Year of Magic ✨",
-    birthdayDate: "Happy Birthday!",
+    birthdayDate: "November 22, 2026",
     heroSubtitle: "Wishing you a sparkling birthday filled with love!",
     letterTitle: "A Special Note For You",
     letterBody: ["Happy Birthday!"],
     letterSignature: "With love ♡",
-    media: []
+    photos: [],
+    videos: []
   };
 
   try {
@@ -31,8 +32,13 @@ document.addEventListener('DOMContentLoaded', async () => {
   }
 
   populatePageContent(data);
-  renderGallery(data.media || [], 'all');
-  setupFilterButtons(data.media || []);
+
+  // Separate photos and videos cleanly
+  const photos = data.photos || (data.media || []).filter(m => m.type === 'photo');
+  const videos = data.videos || (data.media || []).filter(m => m.type === 'video');
+
+  renderSection('photos-grid', photos, 'photo');
+  renderSection('videos-grid', videos, 'video');
 });
 
 function populatePageContent(data) {
@@ -56,13 +62,14 @@ function populatePageContent(data) {
   });
 }
 
-function parseMediaUrl(item) {
+function parseMediaUrl(item, mediaType) {
   const url = (item.url || '').trim();
 
+  // Google Drive share link
   const driveMatch = url.match(/\/file\/d\/([a-zA-Z0-9_-]+)/) || url.match(/[?&]id=([a-zA-Z0-9_-]+)/);
   if (url.includes('drive.google.com') && driveMatch) {
     const fileId = driveMatch[1];
-    if (item.type === 'photo') {
+    if (mediaType === 'photo') {
       return {
         kind: 'image',
         src: `https://lh3.googleusercontent.com/d/${fileId}`,
@@ -77,8 +84,9 @@ function parseMediaUrl(item) {
     }
   }
 
+  // YouTube link
   const ytMatch = url.match(/(?:youtube\.com\/(?:watch\?v=|embed\/|shorts\/)|youtu\.be\/)([a-zA-Z0-9_-]{11})/);
-  if (ytMatch && item.type === 'video') {
+  if (ytMatch && mediaType === 'video') {
     const ytId = ytMatch[1];
     return {
       kind: 'iframe',
@@ -87,27 +95,28 @@ function parseMediaUrl(item) {
     };
   }
 
-  if (item.type === 'photo') {
+  if (mediaType === 'photo') {
     return { kind: 'image', src: url, thumb: url };
   }
   return { kind: 'video', src: url, thumb: url };
 }
 
-function renderGallery(mediaList, filter) {
-  const grid = document.getElementById('gallery-grid');
+function renderSection(gridId, items, mediaType) {
+  const grid = document.getElementById(gridId);
   grid.innerHTML = '';
 
-  const filtered = mediaList.filter(item => filter === 'all' || item.type === filter);
+  // Skip entries with empty URLs so placeholders don't show broken cards
+  const validItems = items.filter(item => item && item.url && item.url.trim() !== '');
 
-  if (filtered.length === 0) {
-    grid.innerHTML = '<p style="grid-column: 1/-1; text-align:center; color: var(--text-muted);">No memories added in this category yet.</p>';
+  if (validItems.length === 0) {
+    grid.innerHTML = `<p style="grid-column: 1/-1; text-align:center; color: var(--text-muted);">No ${mediaType}s added yet.</p>`;
     return;
   }
 
-  filtered.forEach(item => {
-    const parsed = parseMediaUrl(item);
+  validItems.forEach(item => {
+    const parsed = parseMediaUrl(item, mediaType);
     const card = document.createElement('div');
-    card.className = 'media-card';
+    card.className = mediaType === 'video' ? 'media-card video-card' : 'media-card photo-card';
 
     const thumbWrap = document.createElement('div');
     thumbWrap.className = 'media-thumb-wrap';
@@ -115,7 +124,7 @@ function renderGallery(mediaList, filter) {
     if (parsed.kind === 'image') {
       const img = document.createElement('img');
       img.src = parsed.thumb;
-      img.alt = item.caption || 'Birthday memory';
+      img.alt = item.caption || 'Birthday photo';
       img.loading = 'lazy';
       thumbWrap.appendChild(img);
     } else if (parsed.kind === 'video') {
@@ -137,7 +146,7 @@ function renderGallery(mediaList, filter) {
       thumbWrap.appendChild(placeholder);
     }
 
-    if (item.type === 'video') {
+    if (mediaType === 'video') {
       const playBadge = document.createElement('div');
       playBadge.className = 'play-badge';
       playBadge.innerHTML = '▶';
@@ -146,7 +155,7 @@ function renderGallery(mediaList, filter) {
 
     const typeTag = document.createElement('span');
     typeTag.className = 'media-badge-type';
-    typeTag.textContent = item.type === 'video' ? '🎥 Video' : '📸 Photo';
+    typeTag.textContent = mediaType === 'video' ? '🎥 Video' : '📸 Photo';
     thumbWrap.appendChild(typeTag);
 
     const info = document.createElement('div');
@@ -161,17 +170,6 @@ function renderGallery(mediaList, filter) {
 
     card.addEventListener('click', () => openLightbox(parsed, item));
     grid.appendChild(card);
-  });
-}
-
-function setupFilterButtons(mediaList) {
-  const buttons = document.querySelectorAll('.filter-btn');
-  buttons.forEach(btn => {
-    btn.addEventListener('click', () => {
-      buttons.forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-      renderGallery(mediaList, btn.dataset.filter);
-    });
   });
 }
 
