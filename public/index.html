@@ -11,9 +11,35 @@
 
   <link rel="stylesheet" href="/css.css">
 </head>
-<body>
+<body class="locked">
 
   <canvas id="sparkle-canvas"></canvas>
+
+  <!-- Intro Candle Overlay (Must blow out candles to open the website) -->
+  <div id="intro-overlay" class="intro-overlay" role="dialog" aria-modal="true" aria-label="Make a Birthday Wish">
+    <div class="intro-glow"></div>
+    <div class="intro-card glass-card">
+      <p class="intro-badge">✨ A Special Surprise Awaits ✨</p>
+      <h1 class="intro-title">Happy Birthday,<br><span id="intro-name" class="rose-gold-text">Kathe</span></h1>
+      <p class="intro-subtitle">Close your eyes, make a wish, and blow out the candles to open your surprise ♡</p>
+
+      <div class="cake-wrapper intro-cake-wrapper">
+        <div class="candles-row" id="intro-candles-row">
+          <div class="candle intro-candle" title="Tap to blow out!"><div class="flame"></div><div class="smoke"></div></div>
+          <div class="candle intro-candle" title="Tap to blow out!"><div class="flame"></div><div class="smoke"></div></div>
+          <div class="candle intro-candle" title="Tap to blow out!"><div class="flame"></div><div class="smoke"></div></div>
+        </div>
+        <div class="cake-top"></div>
+        <div class="cake-body">
+          <span class="cake-ribbon">♡</span>
+        </div>
+        <div class="cake-plate"></div>
+      </div>
+
+      <p id="intro-status" class="intro-status">Tap each glowing flame to blow it out ✨ (3 left)</p>
+      <button id="blow-all-btn" class="btn-rose-gold intro-btn">💨 Blow Out Candles</button>
+    </div>
+  </div>
 
   <nav class="navbar">
     <div class="nav-brand" id="nav-name">♡ Kathe</div>
