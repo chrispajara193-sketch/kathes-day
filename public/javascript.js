@@ -2,9 +2,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   const fx = initSparkleAndConfettiEngine();
   window.triggerBirthdayConfetti = (count = 130) => fx.burstConfetti(count);
 
-  // Setup Intro Gate & Inside Candles separately
   setupIntroOverlay(fx);
-  setupCandles();
   setupLightbox();
 
   document.getElementById('confetti-btn').addEventListener('click', () => {
@@ -45,7 +43,6 @@ function setupIntroOverlay(fx) {
   const overlay = document.getElementById('intro-overlay');
   const introCandles = document.querySelectorAll('#intro-candles-row .intro-candle');
   const statusEl = document.getElementById('intro-status');
-  const blowAllBtn = document.getElementById('blow-all-btn');
   let unlocked = false;
 
   function unlockSite() {
@@ -53,8 +50,6 @@ function setupIntroOverlay(fx) {
     unlocked = true;
 
     statusEl.textContent = '✨ Wish granted! Opening your surprise... ✨';
-    blowAllBtn.disabled = true;
-    blowAllBtn.style.opacity = '0.7';
     fx.burstConfetti(160);
 
     setTimeout(() => {
@@ -63,32 +58,17 @@ function setupIntroOverlay(fx) {
     }, 950);
   }
 
-  function checkIntroCandles() {
-    const remaining = Array.from(introCandles).filter(c => !c.classList.contains('blown')).length;
-    if (remaining === 0) {
-      unlockSite();
-    } else {
-      statusEl.textContent = `Tap each glowing flame to blow it out ✨ (${remaining} left)`;
-    }
-  }
-
   introCandles.forEach(candle => {
     candle.addEventListener('click', () => {
       if (candle.classList.contains('blown') || unlocked) return;
       candle.classList.add('blown');
-      checkIntroCandles();
-    });
-  });
 
-  blowAllBtn.addEventListener('click', () => {
-    if (unlocked) return;
-    introCandles.forEach((candle, index) => {
-      setTimeout(() => {
-        candle.classList.add('blown');
-        if (index === introCandles.length - 1) {
-          checkIntroCandles();
-        }
-      }, index * 160);
+      const remaining = Array.from(introCandles).filter(c => !c.classList.contains('blown')).length;
+      if (remaining === 0) {
+        unlockSite();
+      } else {
+        statusEl.textContent = `Tap each glowing flame to blow it out ✨ (${remaining} left)`;
+      }
     });
   });
 }
@@ -221,33 +201,6 @@ function renderSection(gridId, items, mediaType) {
 
     card.addEventListener('click', () => openLightbox(parsed, item));
     grid.appendChild(card);
-  });
-}
-
-function setupCandles() {
-  const candles = document.querySelectorAll('#candles-row .candle');
-  const wishResult = document.getElementById('wish-result');
-  const relightBtn = document.getElementById('relight-btn');
-  const instruction = document.getElementById('wish-instruction');
-
-  candles.forEach(candle => {
-    candle.addEventListener('click', () => {
-      candle.classList.add('blown');
-      const allBlown = Array.from(candles).every(c => c.classList.contains('blown'));
-      if (allBlown) {
-        wishResult.classList.remove('hidden');
-        relightBtn.classList.remove('hidden');
-        instruction.textContent = 'All candles blown out!';
-        if (window.triggerBirthdayConfetti) window.triggerBirthdayConfetti(130);
-      }
-    });
-  });
-
-  relightBtn.addEventListener('click', () => {
-    candles.forEach(c => c.classList.remove('blown'));
-    wishResult.classList.add('hidden');
-    relightBtn.classList.add('hidden');
-    instruction.textContent = 'Tap the glowing candles to blow them out & reveal a sparkle surprise!';
   });
 }
 
