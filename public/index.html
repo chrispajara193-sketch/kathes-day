@@ -15,7 +15,7 @@
 
   <canvas id="sparkle-canvas"></canvas>
 
-  <!-- Intro Candle Overlay (Must blow out candles to open the website) -->
+  <!-- Intro Candle Overlay (Must tap each flame to blow out & unlock) -->
   <div id="intro-overlay" class="intro-overlay" role="dialog" aria-modal="true" aria-label="Make a Birthday Wish">
     <div class="intro-glow"></div>
     <div class="intro-card glass-card">
@@ -37,7 +37,6 @@
       </div>
 
       <p id="intro-status" class="intro-status">Tap each glowing flame to blow it out ✨ (3 left)</p>
-      <button id="blow-all-btn" class="btn-rose-gold intro-btn">💨 Blow Out Candles</button>
     </div>
   </div>
 
@@ -45,7 +44,6 @@
     <div class="nav-brand" id="nav-name">♡ Kathe</div>
     <ul class="nav-links">
       <li><a href="#hero">Home</a></li>
-      <li><a href="#wish-section">Make a Wish</a></li>
       <li><a href="#letter">Love Note</a></li>
       <li><a href="#videos">Greetings</a></li>
       <li><a href="#photos">Photos</a></li>
@@ -67,31 +65,6 @@
       </div>
     </div>
   </header>
-
-  <section id="wish-section" class="section wish-section">
-    <div class="container">
-      <div class="glass-card wish-card">
-        <h2 class="section-title">Make a Birthday Wish</h2>
-        <p class="section-subtitle" id="wish-instruction">Tap the glowing candles to blow them out & reveal a sparkle surprise!</p>
-        
-        <div class="cake-wrapper">
-          <div class="candles-row" id="candles-row">
-            <div class="candle" title="Click to blow out!"><div class="flame"></div></div>
-            <div class="candle" title="Click to blow out!"><div class="flame"></div></div>
-            <div class="candle" title="Click to blow out!"><div class="flame"></div></div>
-          </div>
-          <div class="cake-top"></div>
-          <div class="cake-body">
-            <span class="cake-ribbon">♡</span>
-          </div>
-          <div class="cake-plate"></div>
-        </div>
-
-        <p id="wish-result" class="wish-result hidden">✨ Your wish has been sent to the stars! Happy Birthday! ✨</p>
-        <button id="relight-btn" class="btn-outline small hidden">Relight Candles</button>
-      </div>
-    </div>
-  </section>
 
   <section id="letter" class="section letter-section">
     <div class="container">
