@@ -2,8 +2,9 @@ document.addEventListener('DOMContentLoaded', async () => {
   const fx = initSparkleAndConfettiEngine();
   window.triggerBirthdayConfetti = (count = 130) => fx.burstConfetti(count);
 
-  setupIntroOverlay(fx);
-  setupLightbox();
+  const music = setupMusic();
+  setupIntroOverlay(fx, music);
+  setupLightbox(music);
 
   document.getElementById('confetti-btn').addEventListener('click', () => {
     fx.burstConfetti(120);
@@ -13,7 +14,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     celebrantName: "Kathe",
     tagline: "✨ Celebrating Another Year of Magic ✨",
     birthdayDate: "November 22, 2026",
-    backgroundSong: "https://www.youtube.com/watch?v=YOUR_SONG_ID",
+    backgroundSong: "https://www.youtube.com/watch?v=Y7MLgSQgjzE&list=RDY7MLgSQgjzE&start_radio=1",
     heroSubtitle: "Wishing you a sparkling birthday filled with love!",
     letterTitle: "A Special Note For You",
     letterBody: ["Happy Birthday!"],
@@ -31,16 +32,176 @@ document.addEventListener('DOMContentLoaded', async () => {
     console.warn('Could not fetch /api/code (normal if previewing offline via file://):', err);
   }
 
+  music.setSong(data.backgroundSong);
   populatePageContent(data);
 
   const videos = data.videos || (data.media || []).filter(m => m.type === 'video');
   const photos = data.photos || (data.media || []).filter(m => m.type === 'photo');
 
-  renderSection('videos-grid', videos, 'video');
-  renderSection('photos-grid', photos, 'photo');
+  renderSection('videos-grid', videos, 'video', music);
+  renderSection('photos-grid', photos, 'photo', music);
 });
 
-function setupIntroOverlay(fx) {
+function extractYouTubeId(url) {
+  const match = (url || '').match(/(?:youtube\.com\/(?:watch\?v=|embed\/|shorts\/)|youtu\.be\/)([a-zA-Z0-9_-]{11})/);
+  return match ? match[1] : null;
+}
+
+function setupMusic() {
+  const audio = document.getElementById('bg-music');
+  const toggleBtn = document.getElementById('music-toggle');
+
+  let mode = null; // 'youtube' | 'audio'
+  let ytPlayer = null;
+  let ytReady = false;
+  let pendingPlay = false;
+  let isPlaying = false;
+  let userMuted = false;
+  let pausedForVideo = false;
+
+  audio.volume = 0.45;
+
+  function updateBtn() {
+    if (!mode) return;
+    toggleBtn.textContent = isPlaying ? '🎵 Music: On' : '🔇 Music: Off';
+  }
+
+  function playMusic() {
+    if (!mode || userMuted) return;
+    if (mode === 'audio') {
+      audio.play().then(() => {
+        isPlaying = true;
+        updateBtn();
+      }).catch(() => {});
+    } else if (mode === 'youtube') {
+      if (ytReady && ytPlayer) {
+        ytPlayer.setVolume(45);
+        ytPlayer.playVideo();
+      } else {
+        pendingPlay = true;
+      }
+    }
+  }
+
+  function pauseMusic() {
+    if (!mode) return;
+    if (mode === 'audio') {
+      audio.pause();
+      isPlaying = false;
+      updateBtn();
+    } else if (mode === 'youtube' && ytReady && ytPlayer) {
+      pendingPlay = false;
+      ytPlayer.pauseVideo();
+      isPlaying = false;
+      updateBtn();
+    }
+  }
+
+  function initYouTubePlayer(videoId) {
+    const createPlayer = () => {
+      ytPlayer = new YT.Player('yt-bg-player', {
+        height: '2',
+        width: '2',
+        videoId: videoId,
+        playerVars: {
+          autoplay: 0,
+          controls: 0,
+          disablekb: 1,
+          fs: 0,
+          loop: 1,
+          playlist: videoId,
+          playsinline: 1,
+          enablejsapi: 1,
+          origin: window.location.origin
+        },
+        events: {
+          onReady: (e) => {
+            ytReady = true;
+            e.target.setVolume(45);
+            if (pendingPlay && !userMuted) {
+              pendingPlay = false;
+              e.target.playVideo();
+            }
+          },
+          onStateChange: (e) => {
+            if (e.data === YT.PlayerState.PLAYING) {
+              isPlaying = true;
+              updateBtn();
+            } else if (e.data === YT.PlayerState.PAUSED) {
+              isPlaying = false;
+              updateBtn();
+            } else if (e.data === YT.PlayerState.ENDED) {
+              e.target.seekTo(0);
+              e.target.playVideo();
+            }
+          },
+          onError: (e) => {
+            console.warn('YouTube background song error (some official music videos block embedding):', e.data);
+            isPlaying = false;
+            updateBtn();
+          }
+        }
+      });
+    };
+
+    if (window.YT && window.YT.Player) {
+      createPlayer();
+    } else {
+      window.onYouTubeIframeAPIReady = createPlayer;
+      const tag = document.createElement('script');
+      tag.src = 'https://www.youtube.com/iframe_api';
+      document.head.appendChild(tag);
+    }
+  }
+
+  toggleBtn.addEventListener('click', () => {
+    if (!mode) return;
+    if (isPlaying) {
+      userMuted = true;
+      pauseMusic();
+    } else {
+      userMuted = false;
+      playMusic();
+    }
+  });
+
+  return {
+    setSong(url) {
+      const cleanUrl = (url || '').trim();
+      if (!cleanUrl) return;
+
+      const ytId = extractYouTubeId(cleanUrl);
+      toggleBtn.classList.remove('hidden');
+
+      if (ytId) {
+        mode = 'youtube';
+        initYouTubePlayer(ytId);
+      } else {
+        mode = 'audio';
+        audio.src = cleanUrl;
+      }
+      updateBtn();
+    },
+    startIfEnabled() {
+      playMusic();
+    },
+    pauseForVideo() {
+      if (mode && isPlaying) {
+        pausedForVideo = true;
+        pauseMusic();
+      }
+    },
+    resumeAfterVideo() {
+      if (mode && pausedForVideo && !userMuted) {
+        pausedForVideo = false;
+        playMusic();
+      }
+      pausedForVideo = false;
+    }
+  };
+}
+
+function setupIntroOverlay(fx, music) {
   const overlay = document.getElementById('intro-overlay');
   const introCandles = document.querySelectorAll('#intro-candles-row .intro-candle');
   const statusEl = document.getElementById('intro-status');
@@ -49,6 +210,8 @@ function setupIntroOverlay(fx) {
   function unlockSite() {
     if (unlocked) return;
     unlocked = true;
+
+    music.startIfEnabled();
 
     statusEl.textContent = '✨ Wish granted! Opening your surprise... ✨';
     fx.burstConfetti(160);
@@ -117,9 +280,8 @@ function parseMediaUrl(item, mediaType) {
     }
   }
 
-  const ytMatch = url.match(/(?:youtube\.com\/(?:watch\?v=|embed\/|shorts\/)|youtu\.be\/)([a-zA-Z0-9_-]{11})/);
-  if (ytMatch && mediaType === 'video') {
-    const ytId = ytMatch[1];
+  const ytId = extractYouTubeId(url);
+  if (ytId && mediaType === 'video') {
     return {
       kind: 'iframe',
       src: `https://www.youtube.com/embed/${ytId}?autoplay=1`,
@@ -133,7 +295,7 @@ function parseMediaUrl(item, mediaType) {
   return { kind: 'video', src: url, thumb: url };
 }
 
-function renderSection(gridId, items, mediaType) {
+function renderSection(gridId, items, mediaType, music) {
   const grid = document.getElementById(gridId);
   grid.innerHTML = '';
 
@@ -200,12 +362,12 @@ function renderSection(gridId, items, mediaType) {
     card.appendChild(thumbWrap);
     card.appendChild(info);
 
-    card.addEventListener('click', () => openLightbox(parsed, item));
+    card.addEventListener('click', () => openLightbox(parsed, item, mediaType, music));
     grid.appendChild(card);
   });
 }
 
-function setupLightbox() {
+function setupLightbox(music) {
   const lightbox = document.getElementById('lightbox');
   const closeBtn = document.getElementById('lightbox-close');
   const backdrop = lightbox.querySelector('.lightbox-backdrop');
@@ -213,6 +375,7 @@ function setupLightbox() {
   const close = () => {
     lightbox.classList.add('hidden');
     document.getElementById('lightbox-media-container').innerHTML = '';
+    music.resumeAfterVideo();
   };
 
   closeBtn.addEventListener('click', close);
@@ -222,7 +385,11 @@ function setupLightbox() {
   });
 }
 
-function openLightbox(parsed, item) {
+function openLightbox(parsed, item, mediaType, music) {
+  if (mediaType === 'video') {
+    music.pauseForVideo();
+  }
+
   const lightbox = document.getElementById('lightbox');
   const container = document.getElementById('lightbox-media-container');
   container.innerHTML = '';
