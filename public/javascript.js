@@ -51,23 +51,56 @@ function setupMusic() {
   const audio = document.getElementById('bg-music');
   const toggleBtn = document.getElementById('music-toggle');
 
+  const NORMAL_VOL = 45; // Normal background volume (0 - 100)
+  const DUCKED_VOL = 8;  // Soft volume while watching a video greeting (0 - 100)
+
   let mode = null; // 'youtube' | 'audio'
   let ytPlayer = null;
   let ytReady = false;
   let pendingPlay = false;
   let isPlaying = false;
   let userMuted = false;
-  let pausedForVideo = false;
+  let isDucked = false;
+  let currentVol = NORMAL_VOL;
+  let fadeTimer = null;
 
-  audio.volume = 0.45;
+  audio.volume = NORMAL_VOL / 100;
 
   function updateBtn() {
     if (!mode) return;
     toggleBtn.textContent = isPlaying ? '🎵 Music: On' : '🔇 Music: Off';
   }
 
+  function applyVolume(vol) {
+    currentVol = Math.max(0, Math.min(100, vol));
+    audio.volume = currentVol / 100;
+    if (mode === 'youtube' && ytReady && ytPlayer && typeof ytPlayer.setVolume === 'function') {
+      ytPlayer.setVolume(Math.round(currentVol));
+    }
+  }
+
+  function fadeTo(targetVol) {
+    if (fadeTimer) clearInterval(fadeTimer);
+    const startVol = currentVol;
+    const steps = 12;
+    let step = 0;
+
+    fadeTimer = setInterval(() => {
+      step++;
+      const nextVol = startVol + ((targetVol - startVol) * (step / steps));
+      applyVolume(nextVol);
+      if (step >= steps) {
+        clearInterval(fadeTimer);
+        fadeTimer = null;
+      }
+    }, 30);
+  }
+
   function playMusic() {
     if (!mode || userMuted) return;
+    const target = isDucked ? DUCKED_VOL : NORMAL_VOL;
+    applyVolume(target);
+
     if (mode === 'audio') {
       audio.play().then(() => {
         isPlaying = true;
@@ -75,7 +108,6 @@ function setupMusic() {
       }).catch(() => {});
     } else if (mode === 'youtube') {
       if (ytReady && ytPlayer) {
-        ytPlayer.setVolume(45);
         ytPlayer.playVideo();
       } else {
         pendingPlay = true;
@@ -117,7 +149,7 @@ function setupMusic() {
         events: {
           onReady: (e) => {
             ytReady = true;
-            e.target.setVolume(45);
+            e.target.setVolume(isDucked ? DUCKED_VOL : NORMAL_VOL);
             if (pendingPlay && !userMuted) {
               pendingPlay = false;
               e.target.playVideo();
@@ -185,18 +217,17 @@ function setupMusic() {
     startIfEnabled() {
       playMusic();
     },
-    pauseForVideo() {
-      if (mode && isPlaying) {
-        pausedForVideo = true;
-        pauseMusic();
+    duckForVideo() {
+      if (mode && isPlaying && !userMuted) {
+        isDucked = true;
+        fadeTo(DUCKED_VOL);
       }
     },
-    resumeAfterVideo() {
-      if (mode && pausedForVideo && !userMuted) {
-        pausedForVideo = false;
-        playMusic();
+    restoreAfterVideo() {
+      if (isDucked) {
+        isDucked = false;
+        fadeTo(NORMAL_VOL);
       }
-      pausedForVideo = false;
     }
   };
 }
@@ -375,7 +406,7 @@ function setupLightbox(music) {
   const close = () => {
     lightbox.classList.add('hidden');
     document.getElementById('lightbox-media-container').innerHTML = '';
-    music.resumeAfterVideo();
+    music.restoreAfterVideo();
   };
 
   closeBtn.addEventListener('click', close);
@@ -387,7 +418,7 @@ function setupLightbox(music) {
 
 function openLightbox(parsed, item, mediaType, music) {
   if (mediaType === 'video') {
-    music.pauseForVideo();
+    music.duckForVideo();
   }
 
   const lightbox = document.getElementById('lightbox');
