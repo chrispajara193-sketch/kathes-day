@@ -33,7 +33,7 @@ const BIRTHDAY_CONFIG = {
   // ------------------------------------------------------------------
   photos: [
     {
-      url: "https://images.unsplash.com/photo-1530103862676-de8c9debad1d?auto=format&fit=crop&w=900&q=80",
+      url: "https://drive.google.com/file/d/1iPxmFWVrwg00GU0Tl0m_aX-JMjlGBtr0/view?usp=sharing",
       caption: "Sparkles & Birthday Vibes ✨",
       date: "Favorite Moment"
     },
