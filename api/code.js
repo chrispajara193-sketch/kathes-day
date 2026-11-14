@@ -36,6 +36,11 @@ const BIRTHDAY_CONFIG = {
       url: "https://drive.google.com/file/d/1ELnqaaTuIdj3U9LBrFgTZ8xCKNm3xds2/view?usp=sharing",
       caption: "Happy Birthday ate kathe 🎥💖",
       date: "From: Thea"
+    },
+    {
+      url: "https://drive.google.com/file/d/1NBZHyPm6fmuxeQUE0LZECeKIFWNjve4X/view?usp=sharing",
+      caption: "Happy Birthday ate kathe 🎥💖",
+      date: "From: Tyler & Pia"
     }
   ],
 
