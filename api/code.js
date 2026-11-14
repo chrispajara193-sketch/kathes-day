@@ -241,6 +241,11 @@ const BIRTHDAY_CONFIG = {
       url: "https://drive.google.com/file/d/12yqVziW3_3jLLHyPv__0R-JdA3Vo1deK/view?usp=sharing",
       caption: "",
       date: ""
+    },
+    {
+      url: "https://drive.google.com/file/d/1eeZJQ00JZyfUaaImJ4uvT2IzbpnEXysO/view?usp=sharing",
+      caption: "",
+      date: ""
     }
   ]
 };
