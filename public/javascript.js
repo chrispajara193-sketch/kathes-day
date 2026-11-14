@@ -13,6 +13,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     celebrantName: "Kathe",
     tagline: "✨ Celebrating Another Year of Magic ✨",
     birthdayDate: "November 22, 2026",
+    backgroundSong: "https://www.youtube.com/watch?v=YOUR_SONG_ID",
     heroSubtitle: "Wishing you a sparkling birthday filled with love!",
     letterTitle: "A Special Note For You",
     letterBody: ["Happy Birthday!"],
