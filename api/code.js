@@ -168,7 +168,7 @@ const BIRTHDAY_CONFIG = {
     },
     {
       url: "https://drive.google.com/file/d/1FaJ365hQ8pyvnyhfsAI2vBmrFE0L10me/view?usp=sharing",
-      caption: "",
+      caption: "Somewhere in the archives of happiness.",
       date: ""
     },
     {
@@ -203,7 +203,7 @@ const BIRTHDAY_CONFIG = {
     },
     {
       url: "https://drive.google.com/file/d/1NTgwBIPCFQO2X5VIdeolowaXVVPb14jw/view?usp=sharing",
-      caption: "",
+      caption: "A moment frozen in time.",
       date: ""
     },
     {
@@ -218,7 +218,7 @@ const BIRTHDAY_CONFIG = {
     },
     {
       url: "https://drive.google.com/file/d/1K3z-sd8mQcW3MLwgMn3rgC6jpaka574r/view?usp=sharing",
-      caption: "",
+      caption: "Some moments never fade, no matter how much time passes.",
       date: ""
     }
   ]
