@@ -874,3 +874,8 @@ body.locked {
   opacity: 0.75;
   animation: gentleBounce 2.4s infinite ease-in-out;
 }
+
+.intro-message-screen.show {
+  pointer-events: none;
+  cursor: default;
+}
