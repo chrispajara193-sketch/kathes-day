@@ -18,8 +18,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     letterTitle: "A Special Note For You",
     letterBody: ["Happy Birthday!"],
     letterSignature: "With love ♡",
-    photos: [],
-    videos: []
+    videos: [],
+    photos: []
   };
 
   try {
@@ -33,12 +33,11 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   populatePageContent(data);
 
-  // Separate photos and videos cleanly
-  const photos = data.photos || (data.media || []).filter(m => m.type === 'photo');
   const videos = data.videos || (data.media || []).filter(m => m.type === 'video');
+  const photos = data.photos || (data.media || []).filter(m => m.type === 'photo');
 
-  renderSection('photos-grid', photos, 'photo');
   renderSection('videos-grid', videos, 'video');
+  renderSection('photos-grid', photos, 'photo');
 });
 
 function populatePageContent(data) {
@@ -65,7 +64,6 @@ function populatePageContent(data) {
 function parseMediaUrl(item, mediaType) {
   const url = (item.url || '').trim();
 
-  // Google Drive share link
   const driveMatch = url.match(/\/file\/d\/([a-zA-Z0-9_-]+)/) || url.match(/[?&]id=([a-zA-Z0-9_-]+)/);
   if (url.includes('drive.google.com') && driveMatch) {
     const fileId = driveMatch[1];
@@ -84,7 +82,6 @@ function parseMediaUrl(item, mediaType) {
     }
   }
 
-  // YouTube link
   const ytMatch = url.match(/(?:youtube\.com\/(?:watch\?v=|embed\/|shorts\/)|youtu\.be\/)([a-zA-Z0-9_-]{11})/);
   if (ytMatch && mediaType === 'video') {
     const ytId = ytMatch[1];
@@ -105,11 +102,11 @@ function renderSection(gridId, items, mediaType) {
   const grid = document.getElementById(gridId);
   grid.innerHTML = '';
 
-  // Skip entries with empty URLs so placeholders don't show broken cards
   const validItems = items.filter(item => item && item.url && item.url.trim() !== '');
 
   if (validItems.length === 0) {
-    grid.innerHTML = `<p style="grid-column: 1/-1; text-align:center; color: var(--text-muted);">No ${mediaType}s added yet.</p>`;
+    const emptyText = mediaType === 'video' ? 'No birthday greetings added yet.' : 'No photos added yet.';
+    grid.innerHTML = `<p style="grid-column: 1/-1; text-align:center; color: var(--text-muted);">${emptyText}</p>`;
     return;
   }
 
@@ -137,12 +134,12 @@ function renderSection(gridId, items, mediaType) {
     } else if (parsed.thumb) {
       const img = document.createElement('img');
       img.src = parsed.thumb;
-      img.alt = item.caption || 'Video memory';
+      img.alt = item.caption || 'Birthday greeting';
       thumbWrap.appendChild(img);
     } else {
       const placeholder = document.createElement('div');
       placeholder.className = 'video-placeholder';
-      placeholder.innerHTML = '<span>✨ Video Memory ✨</span>';
+      placeholder.innerHTML = '<span>✨ Birthday Greeting ✨</span>';
       thumbWrap.appendChild(placeholder);
     }
 
@@ -155,7 +152,7 @@ function renderSection(gridId, items, mediaType) {
 
     const typeTag = document.createElement('span');
     typeTag.className = 'media-badge-type';
-    typeTag.textContent = mediaType === 'video' ? '🎥 Video' : '📸 Photo';
+    typeTag.textContent = mediaType === 'video' ? '🎥 Greeting' : '📸 Photo';
     thumbWrap.appendChild(typeTag);
 
     const info = document.createElement('div');
