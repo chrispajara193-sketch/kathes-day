@@ -6,7 +6,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     history.replaceState(null, '', window.location.pathname + window.location.search);
   }
   window.scrollTo(0, 0);
-  
+
   const fx = initSparkleAndConfettiEngine();
   window.triggerBirthdayConfetti = (count = 130) => fx.burstConfetti(count);
 
@@ -22,7 +22,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     celebrantName: "Kathe",
     tagline: "✨ Celebrating Another Year of Magic ✨",
     birthdayDate: "November 22, 2026",
-    backgroundSong: "",
+    backgroundSongs: [],
     heroSubtitle: "Wishing you a sparkling birthday filled with love!",
     letterTitle: "A Special Note For You",
     letterBody: ["Happy Birthday!"],
@@ -40,7 +40,11 @@ document.addEventListener('DOMContentLoaded', async () => {
     console.warn('Could not fetch /api/code (normal if previewing offline via file://):', err);
   }
 
-  music.setSong(data.backgroundSong);
+  const songList = Array.isArray(data.backgroundSongs) && data.backgroundSongs.length > 0
+    ? data.backgroundSongs
+    : (data.backgroundSong ? [data.backgroundSong] : []);
+
+  music.setSongs(songList);
   populatePageContent(data);
 
   const videos = data.videos || (data.media || []).filter(m => m.type === 'video');
@@ -62,7 +66,12 @@ function setupMusic() {
   const NORMAL_VOL = 45;
   const DUCKED_VOL = 8;
 
-  let mode = null;
+  audio.loop = false;
+  audio.volume = NORMAL_VOL / 100;
+
+  let playlist = [];
+  let songIndex = 0;
+  let mode = null; // 'youtube' | 'audio'
   let ytPlayer = null;
   let ytReady = false;
   let pendingPlay = false;
@@ -71,11 +80,15 @@ function setupMusic() {
   let isDucked = false;
   let currentVol = NORMAL_VOL;
   let fadeTimer = null;
+  let isFadingOutForNext = false;
+  let isTransitioningIn = false;
 
-  audio.volume = NORMAL_VOL / 100;
+  function targetVol() {
+    return isDucked ? DUCKED_VOL : NORMAL_VOL;
+  }
 
   function updateBtn() {
-    if (!mode) return;
+    if (playlist.length === 0) return;
     toggleBtn.textContent = isPlaying ? '🎵 Music: On' : '🔇 Music: Off';
   }
 
@@ -87,54 +100,22 @@ function setupMusic() {
     }
   }
 
-  function fadeTo(targetVol) {
+  function fadeTo(goalVol, durationMs = 360) {
     if (fadeTimer) clearInterval(fadeTimer);
     const startVol = currentVol;
-    const steps = 12;
+    const intervalMs = 40;
+    const steps = Math.max(1, Math.round(durationMs / intervalMs));
     let step = 0;
 
     fadeTimer = setInterval(() => {
       step++;
-      const nextVol = startVol + ((targetVol - startVol) * (step / steps));
+      const nextVol = startVol + ((goalVol - startVol) * (step / steps));
       applyVolume(nextVol);
       if (step >= steps) {
         clearInterval(fadeTimer);
         fadeTimer = null;
       }
-    }, 30);
-  }
-
-  function playMusic() {
-    if (!mode || userMuted) return;
-    const target = isDucked ? DUCKED_VOL : NORMAL_VOL;
-    applyVolume(target);
-
-    if (mode === 'audio') {
-      audio.play().then(() => {
-        isPlaying = true;
-        updateBtn();
-      }).catch(() => {});
-    } else if (mode === 'youtube') {
-      if (ytReady && ytPlayer) {
-        ytPlayer.playVideo();
-      } else {
-        pendingPlay = true;
-      }
-    }
-  }
-
-  function pauseMusic() {
-    if (!mode) return;
-    if (mode === 'audio') {
-      audio.pause();
-      isPlaying = false;
-      updateBtn();
-    } else if (mode === 'youtube' && ytReady && ytPlayer) {
-      pendingPlay = false;
-      ytPlayer.pauseVideo();
-      isPlaying = false;
-      updateBtn();
-    }
+    }, intervalMs);
   }
 
   function initYouTubePlayer(videoId) {
@@ -148,8 +129,6 @@ function setupMusic() {
           controls: 0,
           disablekb: 1,
           fs: 0,
-          loop: 1,
-          playlist: videoId,
           playsinline: 1,
           enablejsapi: 1,
           origin: window.location.origin
@@ -157,7 +136,7 @@ function setupMusic() {
         events: {
           onReady: (e) => {
             ytReady = true;
-            e.target.setVolume(isDucked ? DUCKED_VOL : NORMAL_VOL);
+            e.target.setVolume(isTransitioningIn ? 0 : targetVol());
             if (pendingPlay && !userMuted) {
               pendingPlay = false;
               e.target.playVideo();
@@ -167,12 +146,15 @@ function setupMusic() {
             if (e.data === YT.PlayerState.PLAYING) {
               isPlaying = true;
               updateBtn();
+              if (isTransitioningIn) {
+                isTransitioningIn = false;
+                fadeTo(targetVol(), 2000);
+              }
             } else if (e.data === YT.PlayerState.PAUSED) {
               isPlaying = false;
               updateBtn();
             } else if (e.data === YT.PlayerState.ENDED) {
-              e.target.seekTo(0);
-              e.target.playVideo();
+              advanceToNextSong();
             }
           },
           onError: (e) => {
@@ -194,47 +176,153 @@ function setupMusic() {
     }
   }
 
+  function loadAndPlayCurrent(withFadeIn) {
+    if (playlist.length === 0 || userMuted) return;
+
+    const url = playlist[songIndex];
+    const ytId = extractYouTubeId(url);
+    isFadingOutForNext = false;
+    isTransitioningIn = withFadeIn;
+
+    if (withFadeIn) {
+      applyVolume(0);
+    } else {
+      applyVolume(targetVol());
+    }
+
+    if (ytId) {
+      if (mode === 'audio') audio.pause();
+      mode = 'youtube';
+
+      if (ytReady && ytPlayer && typeof ytPlayer.loadVideoById === 'function') {
+        ytPlayer.setVolume(withFadeIn ? 0 : targetVol());
+        ytPlayer.loadVideoById(ytId);
+      } else {
+        pendingPlay = true;
+        if (!ytPlayer) initYouTubePlayer(ytId);
+      }
+    } else {
+      if (mode === 'youtube' && ytReady && ytPlayer) ytPlayer.stopVideo();
+      mode = 'audio';
+      if (audio.src !== new URL(url, window.location.href).href) {
+        audio.src = url;
+      }
+      audio.play().then(() => {
+        isPlaying = true;
+        updateBtn();
+        if (withFadeIn) {
+          isTransitioningIn = false;
+          fadeTo(targetVol(), 2000);
+        }
+      }).catch(() => {});
+    }
+  }
+
+  function advanceToNextSong() {
+    if (playlist.length === 0) return;
+    songIndex = (songIndex + 1) % playlist.length;
+    loadAndPlayCurrent(true);
+  }
+
+  audio.addEventListener('ended', () => {
+    if (mode === 'audio') advanceToNextSong();
+  });
+
+  setInterval(() => {
+    if (!isPlaying || userMuted || isFadingOutForNext || playlist.length === 0) return;
+
+    if (mode === 'youtube' && ytReady && ytPlayer && typeof ytPlayer.getDuration === 'function') {
+      const dur = ytPlayer.getDuration();
+      const cur = ytPlayer.getCurrentTime();
+      if (dur > 8 && cur > 2 && (dur - cur) <= 2.5) {
+        isFadingOutForNext = true;
+        fadeTo(0, 2000);
+      }
+    } else if (mode === 'audio' && audio.duration > 8 && audio.currentTime > 2) {
+      if ((audio.duration - audio.currentTime) <= 2.5) {
+        isFadingOutForNext = true;
+        fadeTo(0, 2000);
+      }
+    }
+  }, 400);
+
+  function resumeCurrent() {
+    if (playlist.length === 0 || userMuted) return;
+    applyVolume(targetVol());
+    if (mode === 'audio') {
+      audio.play().then(() => {
+        isPlaying = true;
+        updateBtn();
+      }).catch(() => {});
+    } else if (mode === 'youtube') {
+      if (ytReady && ytPlayer) {
+        ytPlayer.playVideo();
+      } else {
+        pendingPlay = true;
+      }
+    }
+  }
+
+  function pauseCurrent() {
+    if (mode === 'audio') {
+      audio.pause();
+      isPlaying = false;
+      updateBtn();
+    } else if (mode === 'youtube' && ytReady && ytPlayer) {
+      pendingPlay = false;
+      ytPlayer.pauseVideo();
+      isPlaying = false;
+      updateBtn();
+    }
+  }
+
   toggleBtn.addEventListener('click', () => {
-    if (!mode) return;
+    if (playlist.length === 0) return;
     if (isPlaying) {
       userMuted = true;
-      pauseMusic();
+      pauseCurrent();
     } else {
       userMuted = false;
-      playMusic();
+      resumeCurrent();
     }
   });
 
   return {
-    setSong(url) {
-      const cleanUrl = (url || '').trim();
-      if (!cleanUrl) return;
+    setSongs(urls) {
+      playlist = (urls || []).map(u => (u || '').trim()).filter(Boolean);
+      if (playlist.length === 0) return;
 
-      const ytId = extractYouTubeId(cleanUrl);
+      songIndex = 0;
+      const firstUrl = playlist[0];
+      const ytId = extractYouTubeId(firstUrl);
+
       toggleBtn.classList.remove('hidden');
-
       if (ytId) {
         mode = 'youtube';
         initYouTubePlayer(ytId);
       } else {
         mode = 'audio';
-        audio.src = cleanUrl;
+        audio.src = firstUrl;
       }
       updateBtn();
     },
     startIfEnabled() {
-      playMusic();
+      resumeCurrent();
     },
     duckForVideo() {
-      if (mode && isPlaying && !userMuted) {
+      if (mode && isPlaying && !userMuted && !isFadingOutForNext) {
         isDucked = true;
-        fadeTo(DUCKED_VOL);
+        fadeTo(DUCKED_VOL, 360);
+      } else {
+        isDucked = true;
       }
     },
     restoreAfterVideo() {
       if (isDucked) {
         isDucked = false;
-        fadeTo(NORMAL_VOL);
+        if (!isFadingOutForNext && !isTransitioningIn) {
+          fadeTo(NORMAL_VOL, 360);
+        }
       }
     }
   };
@@ -274,17 +362,14 @@ function setupIntroOverlay(fx, music) {
     statusEl.textContent = '✨ Wish granted! ✨';
     fx.burstConfetti(160);
 
-    // 1. Fade out the candle card
     setTimeout(() => {
       introCard.classList.add('fade-out');
     }, 650);
 
-    // 2. Show "From Vision to Soul" message screen
     setTimeout(() => {
       msgScreen.classList.add('show');
     }, 1050);
 
-    // 3. Disappear at 14 seconds (14000 ms) to match the song's 1st stanza
     setTimeout(finishUnlock, 15050);
   }
 
@@ -302,6 +387,7 @@ function setupIntroOverlay(fx, music) {
     });
   });
 }
+
 function populatePageContent(data) {
   const name = data.celebrantName || 'Birthday Girl';
   document.title = `Happy Birthday ${name}! ✨`;
