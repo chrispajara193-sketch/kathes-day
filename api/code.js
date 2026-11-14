@@ -22,9 +22,14 @@ const BIRTHDAY_CONFIG = {
       date: "From: Raprap"
     },
     {
-      url: "", // Paste your YouTube, Google Drive, or .mp4 greeting link here
-      caption: "A special birthday wish just for you 🎥💖",
-      date: "Birthday Greeting"
+      url: "https://drive.google.com/file/d/1NajEGCGXZyOKLpgH0hvIeHfK9680GK9V/view?usp=sharing",
+      caption: "Happy Birthday ate kathe 🎥💖",
+      date: "From: Dandan"
+    },
+    {
+      url: "https://drive.google.com/file/d/1TMBM8IVREkwE1O7nb78isz2ykioXRG3K/view?usp=sharing",
+      caption: "Happy Birthday ate kathe 🎥💖",
+      date: "From: Chloe"
     }
   ],
 
@@ -51,6 +56,31 @@ const BIRTHDAY_CONFIG = {
       url: "https://drive.google.com/file/d/17rJuFkV2gAXWyZkeVWmRg5HBrCZ-84E7/view?usp=sharing",
       caption: "Cheers to another fabulous year! 🎂",
       date: "Birthday Cake"
+    },
+    {
+      url: "https://drive.google.com/file/d/1wJcTDwyQEQIs3WiA3JIFRbjcjN6cL9Xk/view?usp=sharing",
+      caption: "Sweetest memories together 💖",
+      date: "Throwback"
+    },
+    {
+      url: "https://drive.google.com/file/d/1f6lvAedH7BwzGne6MbOnsIrVN9KmsfZp/view?usp=sharing",
+      caption: "Sweetest memories together 💖",
+      date: "Throwback"
+    },
+    {
+      url: "https://drive.google.com/file/d/1LzfIx0MRemwVOHwobyTVyvrZWuZWQa2x/view?usp=sharing",
+      caption: "Sweetest memories together 💖",
+      date: "Throwback"
+    },
+    {
+      url: "https://drive.google.com/file/d/1tJW7JfQr4VGBLIKrEYocqnyv47sSR1FZ/view?usp=sharing",
+      caption: "Sweetest memories together 💖",
+      date: "Throwback"
+    },
+    {
+      url: "https://drive.google.com/file/d/1dMkkebg1L--5uhZLSWYWL2y-AQt3IbaN/view?usp=sharing",
+      caption: "Sweetest memories together 💖",
+      date: "Throwback"
     }
   ]
 };
