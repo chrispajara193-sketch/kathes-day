@@ -81,7 +81,12 @@ const BIRTHDAY_CONFIG = {
       url: "https://drive.google.com/file/d/1dMkkebg1L--5uhZLSWYWL2y-AQt3IbaN/view?usp=sharing",
       caption: "Sweetest memories together 💖",
       date: "Throwback"
-    }
+    },
+    {
+      url: "https://drive.google.com/file/d/18EGoCXYTx8-cMp0tl8xdZWoIA2pEbiv-/view?usp=sharing",
+      caption: "With Thea",
+      date: "Throwback Literal"
+    }    
   ]
 };
 
