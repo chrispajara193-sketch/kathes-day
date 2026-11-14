@@ -70,6 +70,11 @@ const BIRTHDAY_CONFIG = {
       url: "https://drive.google.com/file/d/1sEqGYsZZMcyAesi9Pn22PTkAe7iSI3eP/view?usp=sharing",
       caption: "Happy Birthday ate kathe 🎥💖",
       date: "From: Yengyeng"
+    },
+    {
+      url: "https://drive.google.com/file/d/1yqudiKanQcIexSbi9bTHslDwJnbSn47P/view?usp=sharing",
+      caption: "Happy Birthday ate kathe 🎥💖",
+      date: "From: Zhia"
     }
   ],
 
@@ -294,6 +299,16 @@ const BIRTHDAY_CONFIG = {
     },
     {
       url: "https://drive.google.com/file/d/1RIZr44xO57pQ-DQfNq_486qARUdJV08c/view?usp=sharing",
+      caption: "",
+      date: ""
+    },
+    {
+      url: "https://drive.google.com/file/d/13A3k5FLHXZ8tb2yxpZXLLC7DOmPe24ik/view?usp=sharing",
+      caption: "",
+      date: ""
+    },
+    {
+      url: "https://drive.google.com/file/d/1Yq494nbEkC1wcGQPMXOQeV9kabQL9yhm/view?usp=sharing",
       caption: "",
       date: ""
     }
