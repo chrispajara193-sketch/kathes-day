@@ -234,6 +234,8 @@ function setupMusic() {
 
 function setupIntroOverlay(fx, music) {
   const overlay = document.getElementById('intro-overlay');
+  const introCard = overlay.querySelector('.intro-card');
+  const msgScreen = document.getElementById('intro-message-screen');
   const introCandles = document.querySelectorAll('#intro-candles-row .intro-candle');
   const statusEl = document.getElementById('intro-status');
   let unlocked = false;
@@ -244,13 +246,24 @@ function setupIntroOverlay(fx, music) {
 
     music.startIfEnabled();
 
-    statusEl.textContent = '✨ Wish granted! Opening your surprise... ✨';
+    statusEl.textContent = '✨ Wish granted! ✨';
     fx.burstConfetti(160);
 
+    // 1. Fade out the candle card
+    setTimeout(() => {
+      introCard.classList.add('fade-out');
+    }, 650);
+
+    // 2. Show "From Vision to Soul"
+    setTimeout(() => {
+      msgScreen.classList.add('show');
+    }, 1050);
+
+    // 3. Fade away overlay and reveal the website
     setTimeout(() => {
       overlay.classList.add('unlocked');
       document.body.classList.remove('locked');
-    }, 950);
+    }, 3900);
   }
 
   introCandles.forEach(candle => {
