@@ -40,11 +40,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     console.warn('Could not fetch /api/code (normal if previewing offline via file://):', err);
   }
 
-  const songList = Array.isArray(data.backgroundSongs) && data.backgroundSongs.length > 0
-    ? data.backgroundSongs
-    : (data.backgroundSong ? [data.backgroundSong] : []);
-
-  music.setSongs(songList);
   populatePageContent(data);
 
   const videos = data.videos || (data.media || []).filter(m => m.type === 'video');
@@ -52,10 +47,16 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   renderSection('videos-grid', videos, 'video', music);
   renderSection('photos-grid', photos, 'photo', music);
+
+  // Supports backgroundSongs: [...], backgroundSong: [...], or backgroundSong: "..."
+  const rawSongs = data.backgroundSongs ?? data.backgroundSong;
+  const songList = Array.isArray(rawSongs) ? rawSongs : (rawSongs ? [rawSongs] : []);
+  music.setSongs(songList);
 });
 
 function extractYouTubeId(url) {
-  const match = (url || '').match(/(?:youtube\.com\/(?:watch\?v=|embed\/|shorts\/)|youtu\.be\/)([a-zA-Z0-9_-]{11})/);
+  if (typeof url !== 'string') return null;
+  const match = url.match(/(?:youtube\.com\/(?:watch\?v=|embed\/|shorts\/)|youtu\.be\/)([a-zA-Z0-9_-]{11})/);
   return match ? match[1] : null;
 }
 
@@ -171,7 +172,7 @@ function setupMusic() {
     } else {
       window.onYouTubeIframeAPIReady = createPlayer;
       const tag = document.createElement('script');
-      tag.src = 'https://www.youtube.com/iframe_api';
+      tag.src = 'https://' + 'www.youtube.com/iframe_api';
       document.head.appendChild(tag);
     }
   }
@@ -289,7 +290,10 @@ function setupMusic() {
 
   return {
     setSongs(urls) {
-      playlist = (urls || []).map(u => (u || '').trim()).filter(Boolean);
+      playlist = (urls || [])
+        .filter(u => typeof u === 'string')
+        .map(u => u.trim())
+        .filter(Boolean);
       if (playlist.length === 0) return;
 
       songIndex = 0;
