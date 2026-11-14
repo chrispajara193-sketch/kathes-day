@@ -51,10 +51,10 @@ function setupMusic() {
   const audio = document.getElementById('bg-music');
   const toggleBtn = document.getElementById('music-toggle');
 
-  const NORMAL_VOL = 45; // Normal background volume (0 - 100)
-  const DUCKED_VOL = 8;  // Soft volume while watching a video greeting (0 - 100)
+  const NORMAL_VOL = 45;
+  const DUCKED_VOL = 8;
 
-  let mode = null; // 'youtube' | 'audio'
+  let mode = null;
   let ytPlayer = null;
   let ytReady = false;
   let pendingPlay = false;
@@ -256,21 +256,17 @@ function setupIntroOverlay(fx, music) {
     statusEl.textContent = '✨ Wish granted! ✨';
     fx.burstConfetti(160);
 
-    // 1. Fade out the candle card
     setTimeout(() => {
       introCard.classList.add('fade-out');
     }, 650);
 
-    // 2. Show "From Vision to Soul" message screen
     setTimeout(() => {
       msgScreen.classList.add('show');
     }, 1050);
 
-    // 3. Auto-open the website after 6.5 seconds of reading (or sooner if she taps)
     revealTimer = setTimeout(finishUnlock, 7550);
   }
 
-  // Allow tapping anywhere on the message screen to enter immediately
   msgScreen.addEventListener('click', () => {
     if (msgScreen.classList.contains('show')) {
       finishUnlock();
