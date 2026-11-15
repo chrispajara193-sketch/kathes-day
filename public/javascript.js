@@ -41,6 +41,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   }
 
   populatePageContent(data);
+  renderFamilyWishes(data);
 
   const videos = data.videos || (data.media || []).filter(m => m.type === 'video');
   const photos = data.photos || (data.media || []).filter(m => m.type === 'photo');
@@ -541,6 +542,40 @@ function populatePageContent(data) {
     const p = document.createElement('p');
     p.textContent = paragraph;
     letterBody.appendChild(p);
+  });
+}
+
+function renderFamilyWishes(data) {
+  const titleEl = document.getElementById('family-title');
+  const subEl = document.getElementById('family-subtitle');
+  const grid = document.getElementById('family-wishes-grid');
+  if (!grid) return;
+
+  if (data.titosTitasTitle && titleEl) titleEl.textContent = data.titosTitasTitle;
+  if (data.titosTitasSubtitle && subEl) subEl.textContent = data.titosTitasSubtitle;
+
+  const wishes = (data.titosTitasMessages || []).filter(
+    item => item && item.message && item.message.trim() !== ''
+  );
+
+  grid.innerHTML = '';
+
+  if (wishes.length === 0) {
+    grid.innerHTML = '<p style="grid-column: 1/-1; text-align:center; color: var(--text-muted);">No messages added yet.</p>';
+    return;
+  }
+
+  wishes.forEach(item => {
+    const card = document.createElement('div');
+    card.className = 'wish-note-card glass-card';
+    card.innerHTML = `
+      <div>
+        <div class="wish-quote-mark">“</div>
+        <p class="wish-note-text">${escapeHtml(item.message)}</p>
+      </div>
+      <p class="wish-note-from">— ${escapeHtml(item.from || 'With love')}</p>
+    `;
+    grid.appendChild(card);
   });
 }
 
