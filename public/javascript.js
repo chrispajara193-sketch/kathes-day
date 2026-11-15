@@ -66,8 +66,8 @@ function setupMusic() {
 
   const NORMAL_VOL = 45;
   const DUCKED_VOL = 8;
-  const CROSSFADE_LEAD_SEC = 5.5; // Start fading in Song 2 this many seconds BEFORE Song 1 ends
-  const CROSSFADE_MS = 4000;      // 4-second smooth overlap crossfade
+  const CROSSFADE_LEAD_SEC = 5.5;
+  const CROSSFADE_MS = 4000;
 
   let playlist = [];
   let songIndex = 0;
@@ -79,7 +79,6 @@ function setupMusic() {
   let fadeTimer = null;
   let crossfadeTimer = null;
 
-  // Queue for loading the YouTube IFrame API once for both decks
   let ytApiRequested = false;
   const ytReadyCallbacks = [];
 
@@ -113,7 +112,7 @@ function setupMusic() {
       suffix,
       containerId: 'yt-bg-player-' + suffix,
       audio,
-      mode: null, // 'youtube' | 'audio'
+      mode: null,
       ytPlayer: null,
       ytReady: false,
       vol: 0,
@@ -188,7 +187,6 @@ function setupMusic() {
     }
   }
 
-  // Silently prime the standby deck inside a real candle-tap so it starts instantly later
   function primeStandbyDeck() {
     if (playlist.length < 2) return;
     const standby = decks[1 - activeIdx];
@@ -260,7 +258,6 @@ function setupMusic() {
                 }
               },
               onStateChange: (e) => {
-                // Finish silent priming as soon as playback starts
                 if (deck.priming && e.data === YT.PlayerState.PLAYING) {
                   deck.priming = false;
                   deck.primed = true;
@@ -271,7 +268,6 @@ function setupMusic() {
                   return;
                 }
 
-                // Only update main UI state for the currently active deck
                 if (deck === decks[activeIdx] && !isCrossfading) {
                   if (e.data === YT.PlayerState.PLAYING) {
                     isPlaying = true;
@@ -336,7 +332,6 @@ function setupMusic() {
 
     songIndex = (songIndex + 1) % playlist.length;
 
-    // Start the incoming song silently right away while outgoing song is still playing
     inDeck.priming = false;
     setDeckVol(inDeck, 0);
     playDeck(inDeck);
@@ -363,14 +358,12 @@ function setupMusic() {
         activeIdx = inIdx;
         isCrossfading = false;
 
-        // Pre-cue the NEXT song on the now-idle deck so it's ready for the next crossfade
         const upcomingUrl = playlist[(songIndex + 1) % playlist.length];
         cueDeckWithUrl(outDeck, upcomingUrl);
       }
     }, intervalMs);
   }
 
-  // Watch playback progress to trigger crossfade 5.5 seconds BEFORE current song ends
   setInterval(() => {
     if (!isPlaying || userMuted || isCrossfading || playlist.length < 2) return;
     const deck = decks[activeIdx];
@@ -419,7 +412,6 @@ function setupMusic() {
         .filter(Boolean);
       if (playlist.length === 0) return;
 
-      // Build the two hidden YouTube player slots automatically
       ytWrap.innerHTML = `<div id="${decks[0].containerId}"></div><div id="${decks[1].containerId}"></div>`;
 
       songIndex = 0;
@@ -510,7 +502,6 @@ function setupIntroOverlay(fx, music) {
       if (candle.classList.contains('blown') || unlocked) return;
       candle.classList.add('blown');
 
-      // Silently pre-warm Song 2 on the very first candle tap!
       music.prepareNext();
 
       const remaining = Array.from(introCandles).filter(c => !c.classList.contains('blown')).length;
@@ -554,9 +545,11 @@ function renderFamilyWishes(data) {
   if (data.titosTitasTitle && titleEl) titleEl.textContent = data.titosTitasTitle;
   if (data.titosTitasSubtitle && subEl) subEl.textContent = data.titosTitasSubtitle;
 
-  const wishes = (data.titosTitasMessages || []).filter(
-    item => item && item.message && item.message.trim() !== ''
-  );
+  const wishes = (data.titosTitasMessages || []).filter(item => {
+    if (!item || !item.message) return false;
+    if (Array.isArray(item.message)) return item.message.some(line => line && line.trim() !== '');
+    return typeof item.message === 'string' && item.message.trim() !== '';
+  });
 
   grid.innerHTML = '';
 
@@ -568,10 +561,17 @@ function renderFamilyWishes(data) {
   wishes.forEach(item => {
     const card = document.createElement('div');
     card.className = 'wish-note-card glass-card';
+
+    const lines = Array.isArray(item.message) ? item.message : [item.message];
+    const messageHtml = lines
+      .filter(line => line && line.trim() !== '')
+      .map(line => `<p class="wish-note-text">${escapeHtml(line)}</p>`)
+      .join('');
+
     card.innerHTML = `
       <div>
         <div class="wish-quote-mark">“</div>
-        <p class="wish-note-text">${escapeHtml(item.message)}</p>
+        ${messageHtml}
       </div>
       <p class="wish-note-from">— ${escapeHtml(item.from || 'With love')}</p>
     `;
