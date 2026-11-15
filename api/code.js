@@ -10,7 +10,6 @@ const BIRTHDAY_CONFIG = {
   heroSubtitle: "Wishing the happiest of birthdays to the brightest star in the room. May your year ahead sparkle as brightly as you do!",
 
   titosTitasTitle: "Wishes from Titos & Titas",
-  titosTitasSubtitle: "Heartfelt birthday messages from your loving Titos & Titas ♡",
   titosTitasMessages: [
     {
       from: "Tito Mark",
