@@ -9,6 +9,18 @@ const BIRTHDAY_CONFIG = {
     ],
   heroSubtitle: "Wishing the happiest of birthdays to the brightest star in the room. May your year ahead sparkle as brightly as you do!",
 
+  titosTitasTitle: "Wishes from Titos & Titas",
+  titosTitasSubtitle: "Heartfelt birthday messages from your loving aunties & uncles ♡",
+  titosTitasMessages: [
+    {
+      from: "Tito Mark",
+      message: "Happy happy bday ate Kathe, stay loyal to the Lord and continue to trust His plan.",
+               "Praying for your hearts desire, for your future plans (align in God's plan).",
+               "Enjoy your special day, and see you soon.",
+               "Penge ako ng Maltesers.. 🙂"
+    }
+  ],
+  
   letterTitle: "A Special Note For You",
   letterBody: [
     "Hi love! Happy, happy birthday to the loveliest, kindest, most caring, and beautiful woman I've ever known. I hope you never forget how special you are and how much you deserve all the happiness in this world.",
