@@ -10,14 +10,16 @@ const BIRTHDAY_CONFIG = {
   heroSubtitle: "Wishing the happiest of birthdays to the brightest star in the room. May your year ahead sparkle as brightly as you do!",
 
   titosTitasTitle: "Wishes from Titos & Titas",
-  titosTitasSubtitle: "Heartfelt birthday messages from your loving aunties & uncles ♡",
+  titosTitasSubtitle: "Heartfelt birthday messages from your loving Titos & Titas ♡",
   titosTitasMessages: [
     {
       from: "Tito Mark",
-      message: "Happy happy bday ate Kathe, stay loyal to the Lord and continue to trust His plan.",
+      message: [
+               "Happy happy bday ate Kathe, stay loyal to the Lord and continue to trust His plan.",
                "Praying for your hearts desire, for your future plans (align in God's plan).",
                "Enjoy your special day, and see you soon.",
                "Penge ako ng Maltesers.. 🙂"
+        ]
     }
   ],
   
