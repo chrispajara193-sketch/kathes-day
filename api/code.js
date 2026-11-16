@@ -19,6 +19,15 @@ const BIRTHDAY_CONFIG = {
                "Enjoy your special day, and see you soon.",
                "Penge ako ng Maltesers.. 🙂"
         ]
+    },
+    {
+      from: "Tito Ricky & Tita Len",
+      message: [
+               "Happy, happy birthday, Ate Kathe!",
+               "Keep holding on to the Lord and trusting in His wonderful plan for your life. ",
+               "Praying for your heart's desires and that every step of your future aligns with His will.",
+               "Enjoy your special day to the fullest. See you soon!"
+        ]
     }
   ],
   
