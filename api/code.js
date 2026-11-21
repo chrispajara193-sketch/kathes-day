@@ -104,9 +104,14 @@ const BIRTHDAY_CONFIG = {
       date: "From: Tita Chi"
     },
     {
-      url: "https://drive.google.com/file/d/1gi1NIxiMnWGMF7y4v9LG8COOlh2Yp9Mr/view?usp=sharing",
+      url: "https://drive.google.com/file/d/1ZktXzivsBz9mgqoHHpW4f93Nle66SsCJ/view?usp=sharing",
       caption: "",
       date: "From: Zy Pogi"
+    },
+    {
+      url: "https://drive.google.com/file/d/1QgaVx7D7jPaNxYlVBikamHDnsUaMbQ_y/view?usp=sharing",
+      caption: "",
+      date: "From: Nyjel"
     }
   ],
 
