@@ -339,8 +339,20 @@ const BIRTHDAY_CONFIG = {
       caption: "",
       date: ""
     }
-  ]
+  ],
+
+  
+closingLetterTitle: "One Last Note For You",
+  closingLetterBody: [
+    "Happy birthday, my love! I wish I could be there beside you today to hug you, kiss you, and make your day extra special. Even though distance keeps us apart, please know that my love for you never changes.",
+    "I miss you so much, lablab, and I can't wait for the day when I no longer have to miss you from afar. Always remember that I'm here for you, through good and bad days.",
+    "I'll continue to love, support, and choose you no matter how challenging things get. I hope this new chapter brings you happiness, peace, and everything your heart wishes for.",
+    "Enjoy your special day, love. You deserve all the beautiful things in life.",
+    "I love you so much, and I miss you more than words can say. ❤️"
+  ],
+  closingLetterSignature: "Forever yours ♡"
 };
+
 
 module.exports = (req, res) => {
   res.setHeader("Cache-Control", "no-store");
