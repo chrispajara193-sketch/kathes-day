@@ -533,9 +533,29 @@ function populatePageContent(data) {
     const p = document.createElement('p');
     p.textContent = paragraph;
     letterBody.appendChild(p);
-  });
-}
 
+    const closingSection = document.getElementById('closing-letter');
+  const closingTitle = document.getElementById('closing-letter-title');
+  const closingBody = document.getElementById('closing-letter-body');
+  const closingSig = document.getElementById('closing-letter-signature');
+
+  if (closingSection && closingBody) {
+    const closingLines = (data.closingLetterBody || []).filter(p => p && p.trim() !== '');
+    if (closingLines.length === 0) {
+      closingSection.classList.add('hidden');
+    } else {
+      closingSection.classList.remove('hidden');
+      if (closingTitle) closingTitle.textContent = data.closingLetterTitle || 'One Last Note For You';
+      if (closingSig) closingSig.textContent = data.closingLetterSignature || '';
+      closingBody.innerHTML = '';
+      closingLines.forEach(paragraph => {
+        const p = document.createElement('p');
+        p.textContent = paragraph;
+        closingBody.appendChild(p);
+      });
+    }
+  }
+    
 function renderFamilyWishes(data) {
   const titleEl = document.getElementById('family-title');
   const subEl = document.getElementById('family-subtitle');
