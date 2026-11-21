@@ -45,58 +45,63 @@ const BIRTHDAY_CONFIG = {
   videos: [
     {
       url: "https://drive.google.com/file/d/1mt88lH-0hGUjpK2k9u18gz58ja90-JF2/view?usp=sharing",
-      caption: "Happy Birthday Ate! 🎂✨",
+      caption: "",
       date: "From: Raprap"
     },
     {
       url: "https://drive.google.com/file/d/1NajEGCGXZyOKLpgH0hvIeHfK9680GK9V/view?usp=sharing",
-      caption: "Happy Birthday ate kathe 🎥💖",
+      caption: "",
       date: "From: Dandan"
     },
     {
       url: "https://drive.google.com/file/d/1TMBM8IVREkwE1O7nb78isz2ykioXRG3K/view?usp=sharing",
-      caption: "Happy Birthday ate kathe 🎥💖",
+      caption: "",
       date: "From: Chloe"
     },
     {
       url: "https://drive.google.com/file/d/1ELnqaaTuIdj3U9LBrFgTZ8xCKNm3xds2/view?usp=sharing",
-      caption: "Happy Birthday ate kathe 🎥💖",
+      caption: "",
       date: "From: Thea"
     },
     {
       url: "https://drive.google.com/file/d/1NBZHyPm6fmuxeQUE0LZECeKIFWNjve4X/view?usp=sharing",
-      caption: "Happy Birthday ate kathe 🎥💖",
+      caption: "",
       date: "From: Tyler & Pia"
     },
     {
       url: "https://drive.google.com/file/d/1v7GnHEHmHcZB94ZwyOb_3-Rg9oSCWE2K/view?usp=sharing",
-      caption: "Happy Birthday ate kathe 🎥💖",
+      caption: "",
       date: "From: Chloe & Saydi"
     },
     {
       url: "https://drive.google.com/file/d/1mKnZ0GfRlSlBAsM8ytvBoMow_hYVV7aQ/view?usp=sharing",
-      caption: "Happy Birthday ate kathe 🎥💖",
+      caption: "",
       date: "From: Ashley, Tita Len and Lola"
     },
     {
       url: "https://drive.google.com/file/d/1OSJ7foGWjmqNxG-ZBjQgXZlFluVB7psi/view?usp=sharing",
-      caption: "Happy Birthday ate kathe 🎥💖",
+      caption: "",
       date: "From: Kurth"
     },
     {
       url: "https://drive.google.com/file/d/16-kNHZn3uOgSR6hF6B5eecBg8mAwZtJW/view?usp=sharing",
-      caption: "Happy Birthday ate kathe 🎥💖",
+      caption: "",
       date: "From: Marcus"
     },
     {
       url: "https://drive.google.com/file/d/1sEqGYsZZMcyAesi9Pn22PTkAe7iSI3eP/view?usp=sharing",
-      caption: "Happy Birthday ate kathe 🎥💖",
+      caption: "",
       date: "From: Yengyeng"
     },
     {
       url: "https://drive.google.com/file/d/1yqudiKanQcIexSbi9bTHslDwJnbSn47P/view?usp=sharing",
-      caption: "Happy Birthday ate kathe 🎥💖",
+      caption: "",
       date: "From: Zhia"
+    },
+    {
+      url: "https://drive.google.com/file/d/10q4HQzWdgAm04xye3_90n_LwSmWiu5Un/view?usp=sharing",
+      caption: "",
+      date: "From: Tita Chi"
     }
   ],
 
@@ -331,11 +336,6 @@ const BIRTHDAY_CONFIG = {
     },
     {
       url: "https://drive.google.com/file/d/1Yq494nbEkC1wcGQPMXOQeV9kabQL9yhm/view?usp=sharing",
-      caption: "",
-      date: ""
-    },
-    {
-      url: "https://drive.google.com/file/d/10q4HQzWdgAm04xye3_90n_LwSmWiu5Un/view?usp=sharing",
       caption: "",
       date: ""
     }
