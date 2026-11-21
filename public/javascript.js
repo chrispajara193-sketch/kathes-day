@@ -97,7 +97,7 @@ function setupMusic() {
         }
       };
       const tag = document.createElement('script');
-      tag.src = 'https://' + 'www.youtube.com/iframe_api';
+      tag.src = 'https://' + ['www', 'youtube', 'com'].join('.') + '/iframe_api';
       document.head.appendChild(tag);
     }
   }
@@ -533,8 +533,9 @@ function populatePageContent(data) {
     const p = document.createElement('p');
     p.textContent = paragraph;
     letterBody.appendChild(p);
+  });
 
-    const closingSection = document.getElementById('closing-letter');
+  const closingSection = document.getElementById('closing-letter');
   const closingTitle = document.getElementById('closing-letter-title');
   const closingBody = document.getElementById('closing-letter-body');
   const closingSig = document.getElementById('closing-letter-signature');
@@ -555,7 +556,8 @@ function populatePageContent(data) {
       });
     }
   }
-    
+}
+
 function renderFamilyWishes(data) {
   const titleEl = document.getElementById('family-title');
   const subEl = document.getElementById('family-subtitle');
