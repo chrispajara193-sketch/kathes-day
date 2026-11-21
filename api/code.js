@@ -102,6 +102,11 @@ const BIRTHDAY_CONFIG = {
       url: "https://drive.google.com/file/d/10q4HQzWdgAm04xye3_90n_LwSmWiu5Un/view?usp=sharing",
       caption: "",
       date: "From: Tita Chi"
+    },
+    {
+      url: "https://drive.google.com/file/d/1_bdWQrI6hErVomRFtF66nPsQznM-eWY8/view?usp=sharing",
+      caption: "",
+      date: "From: Zy Pogi"
     }
   ],
 
