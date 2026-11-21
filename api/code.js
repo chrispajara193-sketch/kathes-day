@@ -333,6 +333,11 @@ const BIRTHDAY_CONFIG = {
       url: "https://drive.google.com/file/d/1Yq494nbEkC1wcGQPMXOQeV9kabQL9yhm/view?usp=sharing",
       caption: "",
       date: ""
+    },
+    {
+      url: "https://drive.google.com/file/d/10q4HQzWdgAm04xye3_90n_LwSmWiu5Un/view?usp=sharing",
+      caption: "",
+      date: ""
     }
   ]
 };
