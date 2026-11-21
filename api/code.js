@@ -104,7 +104,7 @@ const BIRTHDAY_CONFIG = {
       date: "From: Tita Chi"
     },
     {
-      url: "https://drive.google.com/file/d/1_bdWQrI6hErVomRFtF66nPsQznM-eWY8/view?usp=sharing",
+      url: "https://drive.google.com/file/d/1gi1NIxiMnWGMF7y4v9LG8COOlh2Yp9Mr/view?usp=sharing",
       caption: "",
       date: "From: Zy Pogi"
     }
